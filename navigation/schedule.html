@@ -15,8 +15,6 @@ show_reading_time: false
   <h1>Schedule</h1>
 </div>
 
-<!-- Styled Change Classes Button --> <div style="text-align: center; margin-top: 20px;"> <button class="change-classes-btn" onclick="window.location.href = '{{ site.baseurl }}/choose_classes'"> Change Classes </button> </div>
-
 <!-- Main Content Container -->
 <div id="contentContainer">
   <!-- Left Section: Period Buttons (Dropdowns) -->
@@ -31,8 +29,17 @@ show_reading_time: false
   </div>
 
   <!-- Right Section: Timer -->
-  <div id="progressContainer" class="timer-section"></div>
+  <div id="progressContainer" class="timer-section">
+    <!-- Timer content like SVG circle goes here -->
+  </div>
+  
+  <!-- Change Classes Button (Placed below timer) -->
+  <div style="text-align: center; margin-top: 20px; width: 100%;">
+    <button class="change-classes-btn" onclick="window.location.href = '{{ site.baseurl }}/choose_classes'">Change Classes</button>
+  </div>
 </div>
+
+
 
 <style>
   /* Header Styling */
@@ -60,23 +67,27 @@ show_reading_time: false
     align-items: center;
   }
 
-   /* Main Content Layout */
-   #contentContainer {
+  /* Main Content Layout */
+  #contentContainer {
     display: flex;
-    justify-content: space-between; /* Ensures dropdowns and timer are side by side */
-    align-items: flex-start; /* Aligns content to the top */
+    flex-direction: row; /* Stack timer and periods side by side */
+    justify-content: flex-start;
+    align-items: flex-start; /* Aligns the content to the top */
     width: 80%;
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 30px auto; /* Adds space around the content */
+    gap: 30px; /* Adds space between the left and right sections */
+    flex-grow: 1; /* Allows the content to fill the space */
   }
 
- .timer-section {
-    width: 70%; /* Adjusts the width of the timer section */
+  /* Timer Section */
+  .timer-section {
+    width: 65%; /* Adjusts the width of the timer section */
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
-    margin-left: 20px; /* Adds spacing between the sections */
+    margin-bottom: 30px; /* Adds space below the timer */
   }
 
   #timeText {
@@ -91,13 +102,16 @@ show_reading_time: false
     padding: 10px;
   }
 
-   /* Button Styling */
+  /* Change Classes Button Container */
+  .change-classes-container {
+    width: 100%;
+    text-align: center;
+    margin-top: 30px; /* Adds space above the button */
+  }
+
+  /* Change Classes Button Styling */
   .change-classes-btn {
-    margin-top: 30px; /* Space above the button */
-    display: block;
-    margin-left: auto;
-    margin-right: auto; /* Centers the button horizontally */
-    width: 80%; /* Matches the content width */
+    width: 80%;
     max-width: 400px;
     padding: 15px 20px;
     background: #1e90ff;
@@ -109,6 +123,7 @@ show_reading_time: false
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    margin-top: 20px;
   }
 
   .change-classes-btn:hover {
@@ -117,12 +132,13 @@ show_reading_time: false
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
   }
 
-  /* Dropdown Section */
+  /* Dropdown Section (Periods) */
   .dropdown-section {
-    width: 25%;
+    width: 30%; /* Adjusted to take up more space */
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    gap: 15px; /* Adds space between dropdown items */
   }
 
   .mini-dropdown-container {
@@ -156,7 +172,24 @@ show_reading_time: false
   circle {
     stroke-linecap: round;
   }
+
+  /* General Responsive Adjustments */
+  @media (max-width: 768px) {
+    #contentContainer {
+      flex-direction: column; /* Stack the content vertically on smaller screens */
+      gap: 20px;
+    }
+
+    .timer-section, .dropdown-section {
+      width: 100%; /* Full width for each section on mobile */
+    }
+
+    .change-classes-container {
+      margin-top: 20px;
+    }
+  }
 </style>
+
 
 <script>
   const schoolStart = new Date();
