@@ -16,7 +16,7 @@ show_reading_time: false
             <th>Delete</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="nolanbody">
     </tbody>
 </table>
 
@@ -50,7 +50,7 @@ show_reading_time: false
   fetch(`${pythonURI}/api/nolandb`, fetchOptions)
         .then((res) => res.json())
         .then((nolans) => {
-            const tableBody = document.querySelector("#nolanTable tbody");
+            const tableBody = document.getElementById("nolanbody");
             nolans.forEach((nolan) => {
                 const row = document.createElement("tr");
 
