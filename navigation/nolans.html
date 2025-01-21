@@ -57,11 +57,65 @@ show_reading_time: false
     const name = prompt("Enter name:");
     if (!name) return;
 
-    fetch(`${fetchOptions}/api/nolandb`, {
+    fetch(`${pythonURI}/api/nolandb`, {
       ...fetchOptions,
       method: "POST",
       body: JSON.stringify({ name }),
-    });
+    })
+      .then((res) => res.json())
+      .then((newNolan) => {
+        const tableBody = document.getElementById("nolanbody");
+        const row = document.createElement("tr");
+
+        const idCell = document.createElement("td");
+        idCell.textContent = newNolan.id;
+
+        const nameCell = document.createElement("td");
+        nameCell.textContent = newNolan.name;
+
+        const updateCell = document.createElement("td");
+        const updateButton = document.createElement("button");
+        updateButton.textContent = "Update";
+
+        updateButton.onclick = async () => {
+          let newName = await updateMenu(nolan.id);
+          if (!newName) return;
+          nameCell.textContent = newName;
+        };
+
+        updateCell.appendChild(updateButton);
+
+        const deleteCell = document.createElement("td");
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+
+        deleteButton.onclick = () => {
+          fetch(`${pythonURI}/api/nolandb`, {
+            ...fetchOptions,
+            method: "DELETE",
+            body: JSON.stringify({ id: nolan.id }),
+          });
+
+          row.remove();
+        };
+
+        deleteCell.appendChild(deleteButton);
+
+        row.appendChild(idCell);
+        row.appendChild(nameCell);
+        row.appendChild(updateCell);
+        row.appendChild(deleteCell);
+
+        tableBody.appendChild(row);
+
+        const rows = Array.from(tableBody.rows);
+        rows.sort((a, b) => {
+          const idA = parseInt(a.cells[0].textContent);
+          const idB = parseInt(b.cells[0].textContent);
+          return idA - idB;
+        });
+        rows.forEach((row) => tableBody.appendChild(row));
+      });
   }
 
   async function updateMenu(id) {
