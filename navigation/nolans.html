@@ -17,6 +17,13 @@ show_reading_time: false
     </tr>
   </thead>
   <tbody id="nolanbody"></tbody>
+  <tfoot>
+    <tr>
+      <td colspan="4">
+        <button onclick="createNolan()">Add</button>
+      </td>
+    </tr>
+  </tfoot>
 </table>
 
 <script>
@@ -45,6 +52,17 @@ show_reading_time: false
     "name": "Nolan",
   }
   */
+
+  function createNolan() {
+    const name = prompt("Enter name:");
+    if (!name) return;
+
+    fetch(`${fetchOptions}/api/nolandb`, {
+      ...fetchOptions,
+      method: "POST",
+      body: JSON.stringify({ name }),
+    });
+  }
 
   async function updateMenu(id) {
     const name = prompt("Enter new name:");
