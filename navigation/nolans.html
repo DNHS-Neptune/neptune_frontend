@@ -46,22 +46,22 @@ show_reading_time: false
   }
   */
 
-  function updateMenu(id) {
+  async function updateMenu(id) {
     const name = prompt("Enter new name:");
     if (!name) return;
 
-    fetch(`${pythonURI}/api/nolandb`, {
+    await fetch(`${pythonURI}/api/nolandb`, {
       ...fetchOptions,
       method: "PUT",
       body: JSON.stringify({ id, name }),
-    }).then(() => {
-      return name;
     });
+
+    return name;
   }
 
   fetch(`${pythonURI}/api/nolandb`, fetchOptions)
     .then((res) => res.json())
-    .then((nolans) => {
+    .then(async (nolans) => {
       const tableBody = document.getElementById("nolanbody");
       nolans.forEach((nolan) => {
         const row = document.createElement("tr");
@@ -76,8 +76,8 @@ show_reading_time: false
         const updateButton = document.createElement("button");
         updateButton.textContent = "Update";
 
-        updateButton.onclick = () => {
-          let newName = updateMenu(nolan.id);
+        updateButton.onclick = async () => {
+          let newName = await updateMenu(nolan.id);
           if (!newName) return;
           nameCell.textContent = newName;
         };
