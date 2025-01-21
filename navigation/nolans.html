@@ -8,16 +8,15 @@ show_reading_time: false
 ---
 
 <table id="nolanTable">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Update</th>
-            <th>Delete</th>
-        </tr>
-    </thead>
-    <tbody id="nolanbody">
-    </tbody>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Update</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+  <tbody id="nolanbody"></tbody>
 </table>
 
 <script>
@@ -47,46 +46,60 @@ show_reading_time: false
   }
   */
 
+  function updateMenu(id) {
+    const name = prompt("Enter new name:");
+    if (!name) return;
+
+    fetch(`${pythonURI}/api/nolandb`, {
+      ...fetchOptions,
+      method: "PUT",
+      body: JSON.stringify({ id, name }),
+    });
+  }
+
   fetch(`${pythonURI}/api/nolandb`, fetchOptions)
-        .then((res) => res.json())
-        .then((nolans) => {
-            const tableBody = document.getElementById("nolanbody");
-            nolans.forEach((nolan) => {
-                const row = document.createElement("tr");
+    .then((res) => res.json())
+    .then((nolans) => {
+      const tableBody = document.getElementById("nolanbody");
+      nolans.forEach((nolan) => {
+        const row = document.createElement("tr");
 
-                const idCell = document.createElement("td");
-                idCell.textContent = nolan.id;
+        const idCell = document.createElement("td");
+        idCell.textContent = nolan.id;
 
-                const nameCell = document.createElement("td");
-                nameCell.textContent = nolan.name;
+        const nameCell = document.createElement("td");
+        nameCell.textContent = nolan.name;
 
-                const updateCell = document.createElement("td");
-                const updateButton = document.createElement("button");
-                updateButton.textContent = "Update";
-                updateCell.appendChild(updateButton);
+        const updateCell = document.createElement("td");
+        const updateButton = document.createElement("button");
+        updateButton.textContent = "Update";
 
-                const deleteCell = document.createElement("td");
-                const deleteButton = document.createElement("button");
-                deleteButton.textContent = "Delete";
+        updateButton.onclick = () => updateMenu(nolan.id);
 
-                deleteButton.onclick = () => {
-                    fetch(`${pythonURI}/api/nolandb`, {
-                        ...fetchOptions,
-                        method: "DELETE",
-                        body: JSON.stringify({ id: nolan.id }),
-                    })
+        updateCell.appendChild(updateButton);
 
-                    row.remove();
-                }
+        const deleteCell = document.createElement("td");
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
 
-                deleteCell.appendChild(deleteButton);
+        deleteButton.onclick = () => {
+          fetch(`${pythonURI}/api/nolandb`, {
+            ...fetchOptions,
+            method: "DELETE",
+            body: JSON.stringify({ id: nolan.id }),
+          });
 
-                row.appendChild(idCell);
-                row.appendChild(nameCell);
-                row.appendChild(updateCell);
-                row.appendChild(deleteCell);
+          row.remove();
+        };
 
-                tableBody.appendChild(row);
-            });
-        });
+        deleteCell.appendChild(deleteButton);
+
+        row.appendChild(idCell);
+        row.appendChild(nameCell);
+        row.appendChild(updateCell);
+        row.appendChild(deleteCell);
+
+        tableBody.appendChild(row);
+      });
+    });
 </script>
