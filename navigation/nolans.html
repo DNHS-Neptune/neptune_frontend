@@ -50,12 +50,12 @@ show_reading_time: false
     const name = prompt("Enter new name:");
     if (!name) return;
 
-    return name;
-
     fetch(`${pythonURI}/api/nolandb`, {
       ...fetchOptions,
       method: "PUT",
       body: JSON.stringify({ id, name }),
+    }).then(() => {
+      return name;
     });
   }
 
