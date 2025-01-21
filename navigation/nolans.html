@@ -1,0 +1,92 @@
+---
+layout: post
+title: Nolans
+permalink: /nolans/
+menu: nav/home.html
+search_exclude: true
+show_reading_time: false
+---
+
+<table id="nolanTable"></table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Update</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+  var pythonURI;
+  if (location.hostname === "localhost") {
+    pythonURI = "http://localhost:8887";
+  } else if (location.hostname === "127.0.0.1") {
+    pythonURI = "http://127.0.0.1:8887";
+  } else {
+    pythonURI = "https://flocker.nighthawkcodingsociety.com";
+  }
+  const fetchOptions = {
+    method: "GET", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, *cors, same-origin
+    cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "include", // include, same-origin, omit
+    headers: {
+      "Content-Type": "application/json",
+      "X-Origin": "client", // New custom header to identify source
+    },
+  };
+
+  /*
+  {
+    "id": 1,
+    "name": "Nolan",
+  }
+  */
+
+  fetch(`${pythonURI}/api/nolandb`, fetchOptions)
+        .then((res) => res.json())
+        .then((nolans) => {
+            const tableBody = document.querySelector("#nolanTable tbody");
+            nolans.forEach((nolan) => {
+                const row = document.createElement("tr");
+
+                const idCell = document.createElement("td");
+                idCell.textContent = nolan.id;
+
+                const nameCell = document.createElement("td");
+                nameCell.textContent = nolan.name;
+
+                const updateCell = document.createElement("td");
+                const updateButton = document.createElement("button");
+                updateButton.textContent = "Update";
+                updateCell.appendChild(updateButton);
+
+                const deleteCell = document.createElement("td");
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+
+                deleteButton.onclick = () => {
+                    fetch(`${pythonURI}/api/nolandb`, {
+                        ...fetchOptions,
+                        method: "DELETE",
+                        body: JSON.stringify({ id: nolan.id }),
+                    })
+
+                    row.remove();
+                }
+
+                deleteCell.appendChild(deleteButton);
+
+                row.appendChild(idCell);
+                row.appendChild(nameCell);
+                row.appendChild(updateCell);
+                row.appendChild(deleteCell);
+
+                tableBody.appendChild(row);
+            });
+        });
+</script>
