@@ -141,7 +141,9 @@ permalink: /ai_homework_bot/
 
     const data = await response.json();
     if (data.error) return;
-    let chatbox = document.querySelector(`div[data-q="${question}"]`);
+    let chatbox = document.querySelector(
+      `div[data-q="${question.split("")[2]}"]`
+    );
     chatbox.remove();
   }
 
@@ -151,10 +153,9 @@ permalink: /ai_homework_bot/
 
     // Display the user's question
     chatBox.innerHTML += `
-            <div data-q="${question.replaceAll(
-              '"',
-              "'"
-            )}" style="margin-bottom: 20px; background: rgba(232, 244, 255, 0.85); padding: 15px; border-radius: 8px;">
+            <div data-q="${
+              question.split("")[2]
+            }" style="margin-bottom: 20px; background: rgba(232, 244, 255, 0.85); padding: 15px; border-radius: 8px;">
                 <strong style="color: #0056b3;">You:</strong> 
                 <span style="color: #0056b3;">${question}</span>
                 <button onclick="deleteQ(${question})">Delete</button>
@@ -228,18 +229,6 @@ permalink: /ai_homework_bot/
       );
     }
   }
-
-  // Attach the sendQuestion function to the "Ask Poseidon" button
-  document
-    .querySelector('button[onclick="sendQuestion()"]')
-    .addEventListener("click", () => {
-      const question = document.getElementById("question").value.trim();
-      if (question) {
-        sendQuestion(question);
-      } else {
-        alert("Please enter a question or use the Record feature!");
-      }
-    });
 </script>
 
 <!-- Optional CSS -->
