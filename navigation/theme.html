@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+    <title>Theme Management</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .action-button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+    <table>
+        <thead>
+            <tr>
+                <th>Action</th>
+                <th>Theme</th>
+                <th>CSS</th>
+                <th>Submit</th>
+            </tr>
+            <tr>
+                <td>Add</td>
+                <td><input type="text" id="addTheme" placeholder="Enter Theme"></td>
+                <td><input type="text" id="addCSS" placeholder="Enter CSS"></td>
+                <td><button class="action-button" onclick="addTheme()">Add</button></td>
+            </tr>
+            <tr>
+                <td>Update</td>
+                <td><input type="text" id="updateTheme" placeholder="Enter Theme"></td>
+                <td><input type="text" id="updateCSS" placeholder="Enter CSS"></td>
+                <td><button class="action-button" onclick="updateTheme()">Update</button></td>
+            </tr>
+            <tr>
+                <td>Read</td>
+                <td><input type="text" id="readTheme" placeholder="Enter Theme"></td>
+                <td><input type="text" id="readCSS" disabled placeholder="CSS will be displayed here"></td>
+                <td><button class="action-button" onclick="readTheme()">Read</button></td>
+            </tr>
+            <tr>
+                <td>Delete</td>
+                <td><input type="text" id="deleteTheme" placeholder="Enter Theme"></td>
+                <td><input type="text" id="deleteCSS" disabled placeholder="CSS cannot be entered"></td>
+                <td><button class="action-button" onclick="deleteTheme()">Delete</button></td>
+            </tr>
+    </table>
+
+    <script type="module">
+        import { pythonURI, fetchOptions } from '{{site.baseurl}}/assets/js/api/config.js';
+
+        // Function to add a theme
+        async function addTheme() {
+            const theme = document.getElementById("addTheme").value;
+            const css = document.getElementById("addCSS").value;
+
+            try {
+                const response = await fetch(`${pythonURI}/api/css/add`, {
+                    ...fetchOptions,
+                    method: "POST",
+                    body: JSON.stringify({ theme, css })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to add theme: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("Theme added:", data);
+                alert("Theme added successfully!");
+            } catch (error) {
+                console.error("Error adding theme:", error.message);
+                alert("Failed to add theme.");
+            }
+        }
+
+        // Function to update a theme
+        async function updateTheme() {
+            const theme = document.getElementById("updateTheme").value;
+            const css = document.getElementById("updateCSS").value;
+
+            try {
+                const response = await fetch(`${pythonURI}/api/css/update`, {
+                    ...fetchOptions,
+                    method: "PUT",
+                    body: JSON.stringify({ theme, css })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to update theme: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("Theme updated:", data);
+                alert("Theme updated successfully!");
+            } catch (error) {
+                console.error("Error updating theme:", error.message);
+                alert("Failed to update theme.");
+            }
+        }
+
+        // Function to read a theme
+        async function readTheme() {
+            const theme = document.getElementById("readTheme").value;
+
+            try {
+                const response = await fetch(`${pythonURI}/api/css/read`, {
+                    ...fetchOptions,
+                    method: "POST",
+                    body: JSON.stringify({ theme })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to read theme: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("Theme read:", data);
+
+                document.getElementById("readCSS").value = data.css || "No CSS found";
+                alert("Theme read successfully!");
+            } catch (error) {
+                console.error("Error reading theme:", error.message);
+                alert("Failed to read theme.");
+            }
+        }
+
+        // Function to delete a theme
+        async function deleteTheme() {
+            const theme = document.getElementById("deleteTheme").value;
+
+            try {
+                const response = await fetch(`${pythonURI}/api/css/delete`, {
+                    ...fetchOptions,
+                    method: "DELETE",
+                    body: JSON.stringify({ theme })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to delete theme: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("Theme deleted:", data);
+                alert("Theme deleted successfully!");
+            } catch (error) {
+                console.error("Error deleting theme:", error.message);
+                alert("Failed to delete theme.");
+            }
+        }
+    </script>
+</body>
+</html>
