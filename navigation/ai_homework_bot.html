@@ -141,10 +141,16 @@ permalink: /ai_homework_bot/
 
     const data = await response.json();
     if (data.error) return;
+
     let chatbox = document.querySelector(
       `div[data-q="${question.split("")[2]}"]`
     );
     chatbox.remove();
+
+    let otherbox = document.querySelector(
+      `div[data-q="${question.split("")[3]}"]`
+    );
+    otherbox.remove();
   }
 
   // Chatbot Logic
@@ -173,7 +179,9 @@ permalink: /ai_homework_bot/
     const aiResponse = data.response || "Error: Unable to fetch response.";
 
     chatBox.innerHTML += `
-            <div style="margin-bottom: 20px; background: #0077be; padding: 15px; border-radius: 8px; color: white;">
+            <div data-q="${
+              question.split("")[3]
+            }" style="margin-bottom: 20px; background: #0077be; padding: 15px; border-radius: 8px; color: white;">
                 <strong>Poseidon:</strong> ${aiResponse}
             </div>`;
     document.getElementById("question").value = ""; // Clear input
