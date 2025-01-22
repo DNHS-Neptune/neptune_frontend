@@ -132,15 +132,32 @@ permalink: /ai_homework_bot/
     },
   };
 
+  async function deleteQ(question) {
+    const response = await fetch(`${pythonURI}/api/ai/delete`, {
+      ...fetchOptions,
+      method: "DELETE",
+      body: JSON.stringify({ question }),
+    });
+
+    const data = await response.json();
+    if (data.error) return;
+    let chatbox = document.querySelector(`div[data-q="${question}"]`);
+    chatbox.remove();
+  }
+
   // Chatbot Logic
   async function sendQuestion(question) {
     const chatBox = document.getElementById("chat-box");
 
     // Display the user's question
     chatBox.innerHTML += `
-            <div style="margin-bottom: 20px; background: rgba(232, 244, 255, 0.85); padding: 15px; border-radius: 8px;">
+            <div data-q="${question.replaceAll(
+              '"',
+              "'"
+            )}" style="margin-bottom: 20px; background: rgba(232, 244, 255, 0.85); padding: 15px; border-radius: 8px;">
                 <strong style="color: #0056b3;">You:</strong> 
                 <span style="color: #0056b3;">${question}</span>
+                <button onclick="deleteQ(${question})">Delete</button>
             </div>`;
 
     // Send the question to the backend
