@@ -294,6 +294,23 @@ show_reading_time: false
             return null;
         }
     };
+    window.fetchUserCSS = async function () {
+        const URL = pythonURI + "/api/theme"; // Adjusted endpoint
+
+        try {
+            const response = await fetch(URL, fetchOptions);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch css: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log("css data", data)
+            return data.theme_mode;
+        } catch (error) {
+            console.error('Error fetching css:', error.message);
+            return null;
+        }
+    };
 
     document.getElementById('applytheme').addEventListener('click', function () {
         updateSkibidiTheme();
@@ -320,7 +337,8 @@ show_reading_time: false
                 const userTheme = await fetchUserTheme(); // Fetch the theme after updating
                 console.log(userTheme)
                 if (userTheme) {
-                    applyTheme(userTheme); // Apply the theme on the client side
+                    // applyTheme(userTheme); // Apply the theme on the client side
+                    console.log(userTheme)
                 }
             } else {
                 console.error('Failed to change theme.');
