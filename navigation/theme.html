@@ -1,5 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+---
+layout: post
+title: Themes
+permalink: /theme
+menu: nav/home.html
+search_exclude: true
+show_reading_time: false
+---
     <title>Theme Management</title>
     <style>
         table {
@@ -19,7 +25,6 @@
         }
     </style>
     <table>
-        <thead>
             <tr>
                 <th>Action</th>
                 <th>Theme</th>
@@ -53,107 +58,106 @@
     </table>
 
     <script type="module">
-        import { pythonURI, fetchOptions } from '{{site.baseurl}}/assets/js/api/config.js';
+    import { pythonURI, fetchOptions } from '{{site.baseurl}}/assets/js/api/config.js';
+    // Import functions from config.js
+    import { putUpdate, postUpdate, deleteData, logoutUser } from "{{site.baseurl}}/assets/js/api/profile.js";
 
-        // Function to add a theme
-        async function addTheme() {
-            const theme = document.getElementById("addTheme").value;
-            const css = document.getElementById("addCSS").value;
+       // Attach functions to the window object for global access
+window.addTheme = async function () {
+    const theme = document.getElementById("addTheme").value;
+    const css = document.getElementById("addCSS").value;
 
-            try {
-                const response = await fetch(`${pythonURI}/api/css/add`, {
-                    ...fetchOptions,
-                    method: "POST",
-                    body: JSON.stringify({ theme, css })
-                });
+    try {
+        const response = await fetch(`${pythonURI}/api/css/add`, {
+            ...fetchOptions,
+            method: "POST",
+            body: JSON.stringify({ theme, css })
+        });
 
-                if (!response.ok) {
-                    throw new Error(`Failed to add theme: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log("Theme added:", data);
-                alert("Theme added successfully!");
-            } catch (error) {
-                console.error("Error adding theme:", error.message);
-                alert("Failed to add theme.");
-            }
+        if (!response.ok) {
+            throw new Error(`Failed to add theme: ${response.status}`);
         }
 
-        // Function to update a theme
-        async function updateTheme() {
-            const theme = document.getElementById("updateTheme").value;
-            const css = document.getElementById("updateCSS").value;
+        const data = await response.json();
+        console.log("Theme added:", data);
+        alert("Theme added successfully!");
+    } catch (error) {
+        console.error("Error adding theme:", error.message);
+        alert("Failed to add theme.");
+    }
+};
 
-            try {
-                const response = await fetch(`${pythonURI}/api/css/update`, {
-                    ...fetchOptions,
-                    method: "PUT",
-                    body: JSON.stringify({ theme, css })
-                });
+window.updateTheme = async function () {
+    const theme = document.getElementById("updateTheme").value;
+    const css = document.getElementById("updateCSS").value;
 
-                if (!response.ok) {
-                    throw new Error(`Failed to update theme: ${response.status}`);
-                }
+    try {
+        const response = await fetch(`${pythonURI}/api/css/update`, {
+            ...fetchOptions,
+            method: "PUT",
+            body: JSON.stringify({ theme, css })
+        });
 
-                const data = await response.json();
-                console.log("Theme updated:", data);
-                alert("Theme updated successfully!");
-            } catch (error) {
-                console.error("Error updating theme:", error.message);
-                alert("Failed to update theme.");
-            }
+        if (!response.ok) {
+            throw new Error(`Failed to update theme: ${response.status}`);
         }
 
-        // Function to read a theme
-        async function readTheme() {
-            const theme = document.getElementById("readTheme").value;
+        const data = await response.json();
+        console.log("Theme updated:", data);
+        alert("Theme updated successfully!");
+    } catch (error) {
+        console.error("Error updating theme:", error.message);
+        alert("Failed to update theme.");
+    }
+};
 
-            try {
-                const response = await fetch(`${pythonURI}/api/css/read`, {
-                    ...fetchOptions,
-                    method: "POST",
-                    body: JSON.stringify({ theme })
-                });
+window.readTheme = async function () {
+    const theme = document.getElementById("readTheme").value;
 
-                if (!response.ok) {
-                    throw new Error(`Failed to read theme: ${response.status}`);
-                }
+    try {
+        const response = await fetch(`${pythonURI}/api/css/read`, {
+            ...fetchOptions,
+            method: "POST",
+            body: JSON.stringify({ theme })
+        });
 
-                const data = await response.json();
-                console.log("Theme read:", data);
-
-                document.getElementById("readCSS").value = data.css || "No CSS found";
-                alert("Theme read successfully!");
-            } catch (error) {
-                console.error("Error reading theme:", error.message);
-                alert("Failed to read theme.");
-            }
+        if (!response.ok) {
+            throw new Error(`Failed to read theme: ${response.status}`);
         }
 
-        // Function to delete a theme
-        async function deleteTheme() {
-            const theme = document.getElementById("deleteTheme").value;
+        const data = await response.json();
+        console.log("Theme read:", data);
+        console.log(data.css)
+        document.getElementById("readCSS").value = data.css || "No CSS found";
+        alert("Theme read successfully!");
+    } catch (error) {
+        console.error("Error reading theme:", error.message);
+        alert("Failed to read theme.");
+    }
+};
 
-            try {
-                const response = await fetch(`${pythonURI}/api/css/delete`, {
-                    ...fetchOptions,
-                    method: "DELETE",
-                    body: JSON.stringify({ theme })
-                });
+window.deleteTheme = async function () {
+    const theme = document.getElementById("deleteTheme").value;
 
-                if (!response.ok) {
-                    throw new Error(`Failed to delete theme: ${response.status}`);
-                }
+    try {
+        const response = await fetch(`${pythonURI}/api/css/delete`, {
+            ...fetchOptions,
+            method: "DELETE",
+            body: JSON.stringify({ theme })
+        });
 
-                const data = await response.json();
-                console.log("Theme deleted:", data);
-                alert("Theme deleted successfully!");
-            } catch (error) {
-                console.error("Error deleting theme:", error.message);
-                alert("Failed to delete theme.");
-            }
+        if (!response.ok) {
+            throw new Error(`Failed to delete theme: ${response.status}`);
         }
+
+        const data = await response.json();
+        console.log("Theme deleted:", data);
+        alert("Theme deleted successfully!");
+    } catch (error) {
+        console.error("Error deleting theme:", error.message);
+        alert("Failed to delete theme.");
+    }
+};
+
     </script>
-</body>
 </html>
