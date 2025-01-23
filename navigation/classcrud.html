@@ -1,0 +1,146 @@
+---
+layout: post
+title: Classes
+permalink: /classcrud/
+menu: nav/home.html
+search_exclude: true
+show_reading_time: false
+---
+
+<table id="classTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Period</th>
+            <th>Pick</th>
+            <th>User</th>
+            <th>Update</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody id="classBody"></tbody>
+    <tfoot>
+        <tr>
+            <td colspan="6">
+                <button onclick="createClass()">Add Class</button>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+<script>
+    var pythonURI;
+    if (location.hostname === "localhost") {
+        pythonURI = "http://localhost:8887";
+    } else if (location.hostname === "127.0.0.1") {
+        pythonURI = "http://127.0.0.1:8887";
+    } else {
+        pythonURI = "https://flocker.nighthawkcodingsociety.com";
+    }
+
+    const fetchOptions = {
+        method: "GET", 
+        mode: "cors", 
+        cache: "default", 
+        credentials: "include", 
+        headers: {
+            "Content-Type": "application/json",
+            "X-Origin": "client",
+        },
+    };
+
+    // Create a new class entry
+    function createClass() {
+        const period = prompt("Enter period:");
+        const pick = prompt("Enter class pick:");
+        const user = prompt("Enter user:");
+
+        if (!period || !pick || !user) return;
+
+        fetch(`${pythonURI}/api/class/add`, {
+            ...fetchOptions,
+            method: "POST",
+            body: JSON.stringify({ period, pick, user }),
+        })
+        .then((res) => res.json())
+        .then((newClass) => {
+            displayClass(newClass);
+        });
+    }
+
+    // Update the pick of a class
+    async function updateMenu(id) {
+        const newPick = prompt("Enter new pick:");
+        if (!newPick) return;
+
+        await fetch(`${pythonURI}/api/class/add`, {
+            ...fetchOptions,
+            method: "PUT",
+            body: JSON.stringify({ id, pick: newPick }),
+        });
+
+        // Update the pick in the table directly
+        const row = document.querySelector(`[data-id="${id}"]`);
+        row.querySelector('.pick').textContent = newPick;
+    }
+
+    // Delete a class from the table
+    function deleteClass(id) {
+        fetch(`${pythonURI}/api/class/add`, {
+            ...fetchOptions,
+            method: "DELETE",
+            body: JSON.stringify({ id }),
+        });
+
+        const row = document.querySelector(`[data-id="${id}"]`);
+        row.remove();
+    }
+
+    // Display all classes on the page
+    function displayClass(classData) {
+        const tableBody = document.getElementById("classBody");
+        const row = document.createElement("tr");
+        row.setAttribute("data-id", classData.id);
+
+        const idCell = document.createElement("td");
+        idCell.textContent = classData.id;
+
+        const periodCell = document.createElement("td");
+        periodCell.textContent = classData.period;
+
+        const pickCell = document.createElement("td");
+        pickCell.classList.add('pick');
+        pickCell.textContent = classData.pick;
+
+        const userCell = document.createElement("td");
+        userCell.textContent = classData.user;
+
+        const updateCell = document.createElement("td");
+        const updateButton = document.createElement("button");
+        updateButton.textContent = "Update";
+        updateButton.onclick = () => updateMenu(classData.id);
+        updateCell.appendChild(updateButton);
+
+        const deleteCell = document.createElement("td");
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.onclick = () => deleteClass(classData.id);
+        deleteCell.appendChild(deleteButton);
+
+        row.appendChild(idCell);
+        row.appendChild(periodCell);
+        row.appendChild(pickCell);
+        row.appendChild(userCell);
+        row.appendChild(updateCell);
+        row.appendChild(deleteCell);
+
+        tableBody.appendChild(row);
+    }
+
+    // Fetch and display existing classes from the backend
+    fetch(`${pythonURI}/api/class/add`, fetchOptions)
+        .then((res) => res.json())
+        .then((classes) => {
+            classes.forEach(displayClass);
+        });
+</script>
