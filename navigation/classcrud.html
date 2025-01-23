@@ -70,7 +70,7 @@ show_reading_time: false
 
     // Update the pick of a class
     async function updateMenu(id) {
-        const newPick = prompt("Enter new pick:");
+        let newPick = prompt("Enter new pick:");
         if (!newPick) return;
 
         await fetch(`${pythonURI}/api/class/add`, {
