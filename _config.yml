@@ -5,7 +5,7 @@ github_username: nighthawkcoders
 github_repo: "neptune_frontend"
 baseurl: "/neptune_frontend"
 future: true
-remote_theme: jekyll/cayman
+remote_theme: jekyll/minima
 minima:
   skin: dark
 # remote_theme: pages-themes/midnight@v0.2.0
