@@ -1,0 +1,190 @@
+---
+layout: post
+title: Sports
+permalink: /sports/
+menu: nav/home.html
+search_exclude: true
+show_reading_time: false
+---
+
+<table id="SportsTable">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Sport</th>
+      <th>Emoji</th>
+      <th>Update</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+  <tbody id="sportbody"></tbody>
+  <tfoot>
+    <tr>
+      <td colspan="5">
+        <button onclick="createSport()">Add</button>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
+<script>
+  var pythonURI;
+  if (location.hostname === "localhost") {
+    pythonURI = "http://localhost:8887";
+  } else if (location.hostname === "127.0.0.1") {
+    pythonURI = "http://127.0.0.1:8887";
+  } else {
+    pythonURI = "https://flocker.nighthawkcodingsociety.com";
+  }
+  const fetchOptions = {
+    method: "GET", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, *cors, same-origin
+    cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "include", // include, same-origin, omit
+    headers: {
+      "Content-Type": "application/json",
+      "X-Origin": "client", // New custom header to identify source
+    },
+  };
+
+
+  function createSport() {
+    const name = prompt("Enter Sport:");
+    if (!name) return;
+
+    fetch(`${pythonURI}/api/sports`, {
+      ...fetchOptions,
+      method: "POST",
+      body: JSON.stringify({ name }),
+    })
+      .then((res) => res.json())
+      .then((newSport) => {
+        const tableBody = document.getElementById("sportbody");
+        const row = document.createElement("tr");
+
+        const idCell = document.createElement("td");
+        idCell.textContent = newSport.id;
+
+        const nameCell = document.createElement("td");
+        nameCell.textContent = newSport.name;
+
+        const emojiCell = document.createElement("td");
+        emojiCell.textContent = newSport.emoji; 
+
+        const updateCell = document.createElement("td");
+        const updateButton = document.createElement("button");
+        updateButton.textContent = "Update";
+
+        updateButton.onclick = async () => {
+          let newSport = await updateMenu(sport.id);
+          if (!newSport) return;
+          nameCell.textContent = newName;
+
+          let newEmoji = await updateMenu(emoji.id);
+          if (!newEmoji) return;
+          nameCell.textContent = newName;
+        };
+
+        updateCell.appendChild(updateButton);
+
+        const deleteCell = document.createElement("td");
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+
+        deleteButton.onclick = () => {
+          fetch(`${pythonURI}/api/sports`, {
+            ...fetchOptions,
+            method: "DELETE",
+            body: JSON.stringify({ id: sport.id }),
+          });
+
+          row.remove();
+        };
+
+        deleteCell.appendChild(deleteButton);
+
+        row.appendChild(idCell);
+        row.appendChild(nameCell);
+        row.appendChild(emojiCell);
+        row.appendChild(updateCell);
+        row.appendChild(deleteCell);
+
+        tableBody.appendChild(row);
+
+        const rows = Array.from(tableBody.rows);
+        rows.sort((a, b) => {
+          const idA = parseInt(a.cells[0].textContent);
+          const idB = parseInt(b.cells[0].textContent);
+          return idA - idB;
+        });
+        rows.forEach((row) => tableBody.appendChild(row));
+      });
+  }
+
+  async function updateMenu(id) {
+    const name = prompt("Enter new Sports:");
+    if (!name) return;
+
+    await fetch(`${pythonURI}/api/sports`, {
+      ...fetchOptions,
+      method: "PUT",
+      body: JSON.stringify({ id, sport, emoji }),
+    });
+
+    return name;
+  }
+
+  fetch(`${pythonURI}/api/sports`, fetchOptions)
+    .then((res) => res.json())
+    .then(async (sports) => {
+      const tableBody = document.getElementById("sportbody");
+      sports.forEach((sport) => {
+        const row = document.createElement("tr");
+
+        const idCell = document.createElement("td");
+        idCell.textContent = sport.id;
+
+        const nameCell = document.createElement("td");
+        nameCell.textContent = sport.name;
+
+        const emojiCell = document.createElement("td");
+        nameCell.textContent = sport.name;
+
+        const updateCell = document.createElement("td");
+        const updateButton = document.createElement("button");
+        updateButton.textContent = "Update";
+
+        updateButton.onclick = async () => {
+          let newName = await updateMenu(sport.id);
+          if (!newName) return;
+          nameCell.textContent = newName;
+        };
+
+        updateCell.appendChild(updateButton);
+
+        const deleteCell = document.createElement("td");
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+
+        deleteButton.onclick = () => {
+          fetch(`${pythonURI}/api/sports`, {
+            ...fetchOptions,
+            method: "DELETE",
+            body: JSON.stringify({ id: sport.id }),
+          });
+
+          row.remove();
+        };
+
+        deleteCell.appendChild(deleteButton);
+
+        row.appendChild(idCell);
+        row.appendChild(nameCell);
+        row.appendChild(emojiCell);
+        row.appendChild(updateCell);
+        row.appendChild(deleteCell);
+
+        tableBody.appendChild(row);
+      });
+    });
+</script>
