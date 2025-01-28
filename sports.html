@@ -82,7 +82,7 @@ async function updateMenu(id) {
 
 // Delete a class from the table
 function deleteSport(id) {
-    fetch(`${pythonURI}/api/sports/add${id}`, {
+    fetch(`${pythonURI}/api/sports/add`, {
         ...fetchOptions,
         method: "DELETE",
         body: JSON.stringify({ id }),
