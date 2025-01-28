@@ -69,7 +69,7 @@ async function updateMenu(id) {
     let newEmoji = prompt("Enter new Emoji:");
     if (!newEmoji) return;
 
-    await fetch(`${pythonURI}/api/sports/${id}`, {
+    await fetch(`${pythonURI}/api/sports/add${id}`, {
         ...fetchOptions,
         method: "PUT",
         body: JSON.stringify({ emoji: newEmoji }),
@@ -82,7 +82,7 @@ async function updateMenu(id) {
 
 // Delete a class from the table
 function deleteSport(id) {
-    fetch(`${pythonURI}/api/sports/${id}`, {
+    fetch(`${pythonURI}/api/sports/add${id}`, {
         ...fetchOptions,
         method: "DELETE",
         body: JSON.stringify({ id }),
