@@ -78,7 +78,7 @@ show_reading_time: false
         updateButton.textContent = "Update";
 
         updateButton.onclick = async () => {
-          let newName = await updateMenu(nolan.id);
+          let newName = await updateMenu(newNolan.id);
           if (!newName) return;
           nameCell.textContent = newName;
         };
