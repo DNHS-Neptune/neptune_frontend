@@ -49,142 +49,92 @@ show_reading_time: false
 
 
   function createSport() {
-    const name = prompt("Enter Sport:");
-    if (!name) return;
+    const sport = prompt("Enter Extracirrcular:");
+    const emoji = prompt("Enter Corrsponding emoji:");
+    if (!sport || !emoji) return;
 
-    fetch(`${pythonURI}/api/sports`, {
+    fetch(`${pythonURI}/api/sports/add`, {
       ...fetchOptions,
       method: "POST",
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ sport, emoji }),
     })
-      .then((res) => res.json())
-      .then((newSport) => {
-        const tableBody = document.getElementById("sportbody");
-        const row = document.createElement("tr");
+    .then((res) => res.json())
+    .then((newSport) => {
+        displaySport(newSport);
+    });
+}
 
-        const idCell = document.createElement("td");
-        idCell.textContent = newSport.id;
+// Update the pick of a class
+async function updateMenu(id) {
+    let newEmoji = prompt("Enter new Emoji:");
+    if (!newEmoji) return;
 
-        const nameCell = document.createElement("td");
-        nameCell.textContent = newSport.name;
-
-        const emojiCell = document.createElement("td");
-        emojiCell.textContent = newSport.emoji; 
-
-        const updateCell = document.createElement("td");
-        const updateButton = document.createElement("button");
-        updateButton.textContent = "Update";
-
-        updateButton.onclick = async () => {
-          let newSport = await updateMenu(sport.id);
-          if (!newSport) return;
-          nameCell.textContent = newName;
-
-          let newEmoji = await updateMenu(emoji.id);
-          if (!newEmoji) return;
-          nameCell.textContent = newName;
-        };
-
-        updateCell.appendChild(updateButton);
-
-        const deleteCell = document.createElement("td");
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Delete";
-
-        deleteButton.onclick = () => {
-          fetch(`${pythonURI}/api/sports`, {
-            ...fetchOptions,
-            method: "DELETE",
-            body: JSON.stringify({ id: sport.id }),
-          });
-
-          row.remove();
-        };
-
-        deleteCell.appendChild(deleteButton);
-
-        row.appendChild(idCell);
-        row.appendChild(nameCell);
-        row.appendChild(emojiCell);
-        row.appendChild(updateCell);
-        row.appendChild(deleteCell);
-
-        tableBody.appendChild(row);
-
-        const rows = Array.from(tableBody.rows);
-        rows.sort((a, b) => {
-          const idA = parseInt(a.cells[0].textContent);
-          const idB = parseInt(b.cells[0].textContent);
-          return idA - idB;
-        });
-        rows.forEach((row) => tableBody.appendChild(row));
-      });
-  }
-
-  async function updateMenu(id) {
-    const name = prompt("Enter new Sports:");
-    if (!name) return;
-
-    await fetch(`${pythonURI}/api/sports`, {
-      ...fetchOptions,
-      method: "PUT",
-      body: JSON.stringify({ id, sport, emoji }),
+    await fetch(`${pythonURI}/api/sports/update/${id}`, {
+        ...fetchOptions,
+        method: "PUT",
+        body: JSON.stringify({ emoji: newEmoji }),
     });
 
-    return name;
-  }
+    // Update the pick in the table directly
+    const row = document.querySelector(`[data-id="${id}"]`);
+    row.querySelector('.emoji').textContent = newEmoji;
+}
 
-  fetch(`${pythonURI}/api/sports`, fetchOptions)
+// Delete a class from the table
+function deleteSport(id) {
+    fetch(`${pythonURI}/api/sports/delete/${id}`, {
+        ...fetchOptions,
+        method: "DELETE",
+        body: JSON.stringify({ id }),
+    });
+
+    const row = document.querySelector(`[data-id="${id}"]`);
+    row.remove();
+}
+
+// Display a sport on the page
+function displaySport(sportData) {
+    const tableBody = document.getElementById("sportbody");
+    const row = document.createElement("tr");
+    row.setAttribute("data-id", sportData.id);
+
+    const idCell = document.createElement("td");
+    idCell.textContent = sportData.id;
+
+    const sportCell = document.createElement("td");
+    sportCell.textContent = sportData.sport;
+
+    const emojiCell = document.createElement("td");
+    emojiCell.textContent = sportData.emoji; 
+
+    const updateCell = document.createElement("td");
+    const updateButton = document.createElement("button");
+    updateButton.textContent = "Update";
+    updateButton.onclick = () => updateMenu(sportData.id);
+    updateCell.appendChild(updateButton);
+
+    const deleteCell = document.createElement("td");
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.onclick = () => deleteSport(sportData.id);
+    deleteCell.appendChild(deleteButton);
+
+    row.appendChild(idCell);
+    row.appendChild(sportCell);
+    row.appendChild(emojiCell);
+    row.appendChild(updateCell);
+    row.appendChild(deleteCell);
+
+    tableBody.appendChild(row);
+}
+
+// Fetch and display existing classes from the backend
+fetch(`${pythonURI}/api/sports`, { 
+    ...fetchOptions, 
+    method: "GET" 
+})
     .then((res) => res.json())
-    .then(async (sports) => {
-      const tableBody = document.getElementById("sportbody");
-      sports.forEach((sport) => {
-        const row = document.createElement("tr");
-
-        const idCell = document.createElement("td");
-        idCell.textContent = sport.id;
-
-        const nameCell = document.createElement("td");
-        nameCell.textContent = sport.name;
-
-        const emojiCell = document.createElement("td");
-        nameCell.textContent = sport.name;
-
-        const updateCell = document.createElement("td");
-        const updateButton = document.createElement("button");
-        updateButton.textContent = "Update";
-
-        updateButton.onclick = async () => {
-          let newName = await updateMenu(sport.id);
-          if (!newName) return;
-          nameCell.textContent = newName;
-        };
-
-        updateCell.appendChild(updateButton);
-
-        const deleteCell = document.createElement("td");
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Delete";
-
-        deleteButton.onclick = () => {
-          fetch(`${pythonURI}/api/sports`, {
-            ...fetchOptions,
-            method: "DELETE",
-            body: JSON.stringify({ id: sport.id }),
-          });
-
-          row.remove();
-        };
-
-        deleteCell.appendChild(deleteButton);
-
-        row.appendChild(idCell);
-        row.appendChild(nameCell);
-        row.appendChild(emojiCell);
-        row.appendChild(updateCell);
-        row.appendChild(deleteCell);
-
-        tableBody.appendChild(row);
-      });
+    .then((sports) => {
+        sports.forEach(displaySport); 
     });
 </script>
