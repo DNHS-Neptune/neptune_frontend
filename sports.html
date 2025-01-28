@@ -69,10 +69,10 @@ async function updateMenu(id) {
     let newEmoji = prompt("Enter new Emoji:");
     if (!newEmoji) return;
 
-    await fetch(`${pythonURI}/api/sports/add${id}`, {
+    await fetch(`${pythonURI}/api/sports/add`, {
         ...fetchOptions,
         method: "PUT",
-        body: JSON.stringify({ emoji: newEmoji }),
+        body: JSON.stringify({ emoji: newEmoji, id }),
     });
 
     // Update the pick in the table directly
