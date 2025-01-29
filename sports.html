@@ -81,15 +81,18 @@ async function updateMenu(id) {
 }
 
 // Delete a class from the table
-function deleteSport(id) {
-    fetch(`${pythonURI}/api/sports/add`, {
-        ...fetchOptions,
-        method: "DELETE",
-        body: JSON.stringify({ id }),
-    });
+async function deleteSport(id) {
+  if (!confirm("Are you sure you want to delete this sport?")) return;
 
-    const row = document.querySelector(`[data-id="${id}"]`);
-    row.remove();
+  await fetch(`${pythonURI}/api/sports/add`, { // Ensure correct endpoint
+      ...fetchOptions,
+      method: "DELETE",
+      body: JSON.stringify({ id }),
+  });
+
+  // Remove the row from the table
+  const row = document.querySelector(`[data-id="${id}"]`);
+  if (row) row.remove();
 }
 
 // Display a sport on the page
