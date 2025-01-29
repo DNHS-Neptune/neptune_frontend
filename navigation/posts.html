@@ -7,13 +7,34 @@ permalink: /posts/
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"></script>
 <script>
+  var pythonURI;
+  if (location.hostname === "localhost") {
+    pythonURI = "http://localhost:8887";
+  } else if (location.hostname === "127.0.0.1") {
+    pythonURI = "http://127.0.0.1:8887";
+  } else {
+    pythonURI = "https://flocker.nighthawkcodingsociety.com";
+  }
+  const fetchOptions = {
+    method: "GET", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, *cors, same-origin
+    cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "include", // include, same-origin, omit
+    headers: {
+      "Content-Type": "application/json",
+      "X-Origin": "client", // New custom header to identify source
+    },
+  };
+
   const socket = io.connect("http://127.0.0.1:8887");
+
   socket.on("connect", () => {
     console.log("Connected to the server");
   });
 
   socket.on("chat_message", (data) => {
-    displayMessage(`${data.user}: ${data.text}`);
+    console.log(data)
+    displayMessage(data.id, `${data.user}: ${data.text}`);
   });
 
   function sendMessage() {
@@ -21,16 +42,59 @@ permalink: /posts/
     const message = document.getElementById("messageInput").value;
 
     if (username && message) {
-      socket.emit("chat_message", { user: username, text: message });
+      const messageId = Date.now(); // Generate a unique ID for the message
+      socket.emit("chat_message", { id: messageId, user: username, text: message });
       document.getElementById("messageInput").value = "";
     }
   }
 
-  function displayMessage(message) {
+  socket.on("chat_update", (data) => {
+    const messEl = document.getElementById(data.id);
+    messEl.remove();
+  })
+
+  socket.on("chat_up", (data) => {
+    const messEl = document.getElementById(data.id);
+    messEl.textContent = data.content;
+  })
+
+  function displayMessage(id, message) {
+    console.log(id)
     const messageList = document.getElementById("messages");
     const newMessage = document.createElement("li");
-    newMessage.textContent = message;
-    messageList.appendChild(newMessage);
+    let isServer = message === "Server: Welcome to the chat!";
+    if (!isServer) newMessage.id = id;
+    let toDel = false;
+
+    const messageText = document.createElement("span");
+    messageText.textContent = message;
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.style.marginLeft = "10px";
+    deleteButton.onclick = () => {
+      socket.emit("chat_delete", { id })
+      toDel = true;
+      document.getElementById(id).remove();
+    };
+
+    const updateButton = document.createElement("button");
+    updateButton.textContent = "Update";
+    updateButton.style.marginLeft = "10px";
+    updateButton.onclick = () => {
+      let __msg = prompt("New Message:");
+      if (!__msg) return;
+
+      socket.emit("chat_update", { id, content: __msg })
+      messageText.textContent = `${message.split(": ")[0]}: ${__msg}`;
+    };
+
+    newMessage.appendChild(messageText);
+    if (!isServer) {
+      newMessage.appendChild(deleteButton);
+      newMessage.appendChild(updateButton);
+    }
+    if (!toDel) messageList.appendChild(newMessage);
   }
 </script>
 
@@ -39,7 +103,7 @@ permalink: /posts/
   <input id="usernameInput" placeholder="Name" />
   <input id="messageInput" placeholder="Message" />
   <button onclick="sendMessage()">Send</button>
-  <div id="messages"></div>
+  <ul id="messages"></ul>
 </div>
 
 <style>
@@ -103,5 +167,36 @@ permalink: /posts/
 
   #messages li:last-child {
     border-bottom: none;
+  }
+
+  button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #d32f2f;
+  }
+
+  button {
+    margin-left: 10px;
+    padding: 2px 6px;
+    /* Smaller padding */
+    font-size: 12px;
+    /* Smaller font size */
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #d32f2f;
   }
 </style>
