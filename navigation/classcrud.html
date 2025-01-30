@@ -51,16 +51,14 @@ show_reading_time: false
 
     // Create a new class entry
     function createClass() {
-        const period = prompt("Enter period:");
         const pick = prompt("Enter class pick:");
-        const user = prompt("Enter user:");
 
-        if (!period || !pick || !user) return;
+        if (!pick) return;
 
         fetch(`${pythonURI}/api/class/add`, {
             ...fetchOptions,
             method: "POST",
-            body: JSON.stringify({ period, pick, user }),
+            body: JSON.stringify({pick}),
         })
         .then((res) => res.json())
         .then((newClass) => {

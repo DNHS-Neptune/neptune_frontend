@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 
+title:
 permalink: /choose_classes/
 menu: nav/home.html
 search_exclude: true
@@ -30,41 +30,58 @@ show_reading_time: false
     margin: 0;
     display: flex;
     align-items: center;
+    text-align: center; /* Ensure the header text is centered */
   }
-
-  .dropdown-container {
-    text-align: center;
-    color: white;
-  }
-
+  
   .dropdown {
-    background: linear-gradient(135deg, #4e4e4e, #1a1a1a);
-    color: white;
-    font-size: 2rem;
-    border: none;
-    border-radius: 30px;
-    padding: 25px 40px;
-    width: 350px;
-    text-align: left;
-    cursor: pointer;
-    margin: 20px auto;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    transition:
-      transform 0.2s ease,
-      background 0.3s ease,
-      margin 0.2s ease,
-      box-shadow 0.3s ease;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  padding: 25px 40px; /* Adjust padding for button size */
+  font-size: 2rem; /* Large font size */
+  cursor: pointer;
+  background: linear-gradient(135deg, #4e4e4e, #1a1a1a); /* Matching gradient from the old style */
+  color: white;
+  border: none;
+  border-radius: 30px; /* Rounded corners */
+  width: 350px; /* Fixed button width */
+  text-align: left; /* Align text to the left */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Subtle shadow effect */
+  transition: transform 0.2s ease, background 0.3s ease, margin 0.2s ease, box-shadow 0.3s ease; /* Transition effects */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative; /* Add relative positioning to button */
+}
 
-  .dropdown:hover {
-    background: linear-gradient(135deg, #6a6a6a, #2d2d2d);
-    transform: scale(1.1);
-    margin-bottom: 30px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-  }
+.dropdown-menu {
+  display: none;
+  position: absolute; /* Position relative to the button */
+  background: #333;
+  border: 1px solid #555;
+  border-radius: 10px;
+  padding: 10px;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  margin-top: 10px; /* Space between the button and dropdown */
+}
+/* Style for the period buttons */
+.dropdown-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between the buttons */
+  padding: 20px;
+  align-items: center; /* Center the buttons horizontally */
+  justify-content: center; /* Align the buttons vertically within the container */
+  margin-top: 30px; /* Ensure there is some space from the header */
+}
+
+.dropdown:hover {
+  background: linear-gradient(135deg, #6a6a6a, #2d2d2d); /* Darker gradient on hover */
+  transform: scale(1.1); /* Slightly enlarge the button */
+  margin-bottom: 30px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); /* Larger shadow on hover */
+}
 
   .dropdown:focus {
     outline: none;
@@ -76,32 +93,30 @@ show_reading_time: false
     margin-left: 10px;
   }
 
-  .class-buttons {
-    margin: 10px 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+
+
+  /* Show dropdown when the 'show' class is added */
+  .dropdown-menu.show {
+    display: block;
   }
 
-  .class-button {
-    background-color: #4caf50;
+  /* Dropdown item styles */
+  .class-card {
+    background: #222;
     color: white;
-    border: none;
-    padding: 5px 10px;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
     cursor: pointer;
-    font-size: 14px;
+    transition: background 0.3s;
+    text-align: center;
   }
 
-  .class-button:hover {
-    background-color: #45a049;
-  }
-
-  .selected-class {
-    background-color: white;
-    color: black;
-    border: 2px solid #4caf50;
+  .class-card:hover {
+    background: #444;
   }
 </style>
+
 
 <!-- Header with Logo and Title -->
 <div class="header-container">
@@ -145,75 +160,76 @@ show_reading_time: false
   const selectedClasses = {};
 
   function getClasses() {
-    fetch(`${pythonURI}/api/classes`, fetchOptions)
-      .then((res) => res.json())
-      .then((json) => {
-        let classes = json.response;
+  fetch(`${pythonURI}/api/class/add`, fetchOptions)
+    .then((res) => res.json())
+    .then((json) => {
+      let classes = json;
+      let periodDropdowns = document.querySelectorAll(".dropdown");
 
-        // Add click functionality to each "Period" button
-        document.querySelectorAll(".dropdown").forEach((dropdown) => {
-          dropdown.onclick = function () {
-            // Check if the dropdown is already open
-            if (dropdown.classList.contains("open")) {
-              // If open, close it and remove the "open" class
-              clearExistingClassButtons(dropdown);
-              dropdown.classList.remove("open");
-            } else {
-              // If not open, close all dropdowns and open this one
-              document.querySelectorAll(".dropdown.open").forEach((d) => {
-                clearExistingClassButtons(d);
-                d.classList.remove("open");
-              });
+      periodDropdowns.forEach((button, index) => {
+        let period = index + 1; // Determine period number
 
-              // Add the "open" class to this dropdown
-              dropdown.classList.add("open");
+        // ✅ Remove any existing dropdown to prevent duplicates
+        let existingDropdown = button.nextElementSibling;
+        if (existingDropdown && existingDropdown.classList.contains("dropdown-menu")) {
+          existingDropdown.remove();
+        }
 
-              // Create a container for class buttons
-              let classButtonContainer = document.createElement("div");
-              classButtonContainer.className = "class-buttons";
+        // ✅ Create a NEW dropdown menu for this period
+        let dropdownMenu = document.createElement("div");
+        dropdownMenu.classList.add("dropdown-menu");
+        dropdownMenu.dataset.period = period; // Link it to the period
 
-              // Create a button for each class
-              classes.forEach((_class) => {
-                let button = document.createElement("button");
-                button.className = "class-button";
-                button.textContent = _class;
+        // Populate dropdown with classes
+        classes.forEach((classObj) => {
+          let card = document.createElement("div");
+          card.classList.add("class-card");
+          card.dataset.class = classObj.pick; // Store class name
+          card.dataset.period = period; // Store period number
+          card.textContent = `${classObj.pick} (Added by ${classObj.user})`;
 
-                // Apply highlight if this class is selected for this period
-                if (selectedClasses[dropdown.textContent] === _class) {
-                  button.classList.add("selected-class");
-                }
-
-                button.onclick = function () {
-                  // Update selected class for this period
-                  selectedClasses[dropdown.textContent] = _class;
-
-                  // Remove 'selected-class' from all buttons within the same period
-                  const siblings =
-                    classButtonContainer.querySelectorAll(".class-button");
-                  siblings.forEach((sibling) =>
-                    sibling.classList.remove("selected-class"),
-                  );
-
-                  // Add 'selected-class' to the clicked button
-                  button.classList.add("selected-class");
-
-                  // Update backend with the selected class
-                  updateBackend(dropdown.textContent, _class);
-                };
-
-                classButtonContainer.appendChild(button);
-              });
-
-              // Append class buttons below the period button
-              dropdown.insertAdjacentElement("afterend", classButtonContainer);
-            }
-          };
+          dropdownMenu.appendChild(card);
         });
-      })
-      .catch((err) => {
-        console.error("Error fetching classes:", err);
+
+        // Append the dropdown menu directly below the button
+        button.insertAdjacentElement("afterend", dropdownMenu); // Insert it after the button
+
+        // ✅ Button event listener to toggle visibility of dropdown
+        button.addEventListener("click", function (event) {
+          event.stopPropagation();
+
+          // Close all other dropdowns
+          document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+            if (menu !== dropdownMenu) menu.classList.remove("show");
+          });
+
+          // Toggle this specific dropdown's visibility
+          dropdownMenu.classList.toggle("show");
+        });
+
+        // ✅ Ensure selection updates correct period
+        dropdownMenu.addEventListener("click", function (event) {
+          if (event.target.classList.contains("class-card")) {
+            let selectedClass = event.target.dataset.class;
+            let selectedPeriod = event.target.dataset.period;
+
+            console.log(`✅ Selected class: ${selectedClass} for Period ${selectedPeriod}`);
+
+            updateBackend(selectedPeriod, selectedClass);
+          }
+        });
       });
-  }
+
+      // ✅ Close dropdown when clicking outside
+      document.addEventListener("click", (event) => {
+        if (!event.target.closest(".dropdown-container")) {
+          document.querySelectorAll(".dropdown-menu").forEach((menu) => menu.classList.remove("show"));
+        }
+      });
+    });
+}
+
+
 
   function clearExistingClassButtons(dropdown) {
     let nextElement = dropdown.nextElementSibling;
@@ -224,66 +240,65 @@ show_reading_time: false
   }
 
   function updateBackend(period, _class) {
-    let channelId;
-    fetch(pythonURI + "/api/channel/filter", {
-      ...fetchOptions,
-      method: "POST",
-      body: JSON.stringify({
-        group_name: "Classes",
-        channel_name: "classlist",
-      }),
+  let channelId;
+  
+  fetch(pythonURI + "/api/channel/filter", {
+    ...fetchOptions,
+    method: "POST",
+    body: JSON.stringify({
+      group_name: "Classes",
+      channel_name: "classlist",
+    }),
+  })
+    .then((res) => res.json())
+    .then((json) => {
+      channelId = json.id;
+
+      return fetch(pythonURI + "/api/post/user", fetchOptions);
     })
-      .then((res) => res.json())
-      .then((json) => {
-        channelId = json.id;
-        fetch(pythonURI + "/api/post/user", {
+    .then((response) => response.json())
+    .then((data) => {
+      // ✅ Filter only posts in "classlist"
+      let periodList = data.filter((post) => post.channel_name === "classlist");
+
+      // ✅ Find if a post already exists for this period
+      let existingPost = periodList.find((post) => post.title == period);
+
+      if (existingPost) {
+        // ✅ Update existing post (avoid duplication)
+        console.log(`Updating period ${period} with class ${_class}`);
+        return fetch(`${pythonURI}/api/post`, {
           ...fetchOptions,
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            let periodList = data.sort(
-              (period) => period.channel_name === "classlist",
-            );
+          method: "PUT",
+          body: JSON.stringify({
+            id: existingPost.id,
+            title: period, // Keep title consistent
+            content: {
+              class: _class,
+            },
+            channel_id: channelId,
+          }),
+        });
+      } else {
+        // ✅ Create a new post if it doesn’t exist
+        console.log(`Creating new post for period ${period} with class ${_class}`);
+        return fetch(pythonURI + "/api/post", {
+          ...fetchOptions,
+          method: "POST",
+          body: JSON.stringify({
+            title: period, // Store period correctly
+            comment: `Class choice for Period ${period}`,
+            content: {
+              class: _class,
+            },
+            channel_id: channelId,
+          }),
+        });
+      }
+    })
+    .catch((error) => console.error("Error:", error));
+}
 
-            let makeNewPost = true;
-            let oldpost = null;
-            periodList.forEach((periodObj) => {
-              if (periodObj.title === period) {
-                makeNewPost = false;
-                oldpost = periodObj;
-              }
-            });
-
-            if (makeNewPost) {
-              fetch(pythonURI + "/api/post", {
-                ...fetchOptions,
-                method: "POST",
-                body: JSON.stringify({
-                  title: period,
-                  comment: "Class choice for " + period,
-                  content: {
-                    class: _class,
-                  },
-                  channel_id: channelId,
-                }),
-              });
-            } else {
-              fetch(`${pythonURI}/api/post`, {
-                ...fetchOptions,
-                method: "PUT",
-                body: JSON.stringify({
-                  id: oldpost.id,
-                  title: `${oldpost.title}`,
-                  content: {
-                    class: _class,
-                  },
-                  channel_id: channelId,
-                }),
-              });
-            }
-          });
-      });
-  }
 
   getClasses();
 </script>

@@ -310,13 +310,24 @@ show_reading_time: false
             );
 
             periodList.forEach((period) => {
-              let el = document.querySelector(`[data-period='${period.title.split(" ")[1]}']`);
-              let txtp = document.createElement("p");
-              let txtnode = document.createTextNode(
-                period.content.class || "Not Chosen"
-              );
-              txtp.appendChild(txtnode);
-              el.appendChild(txtp);
+              console.log(period.title);  // Log the full title to understand its structure
+              console.log(period.title.split(" ")[1]);  // Log the part you're trying to split
+              const periodMatch = period.title.match(/\d+/);  // Matches the first number in the title
+              if (periodMatch) {
+                let periodNumber = periodMatch[0];  // The period number
+                let el = document.querySelector(`[data-period='${periodNumber}']`);
+                if (!el) {
+                  console.log(`Element for period ${periodNumber} not found.`);
+                  return;  // Skip this period if the element isn't found
+                }
+
+                let txtp = document.createElement("p");
+                let txtnode = document.createTextNode(period.content.class || "Not Chosen");
+                txtp.appendChild(txtnode);
+                el.appendChild(txtp);
+              } else {
+                console.log(`Invalid period title format: ${period.title}`);
+              }
             });
           });
       });
