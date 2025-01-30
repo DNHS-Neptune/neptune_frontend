@@ -8,8 +8,8 @@ show_reading_time: false
 ---
 
 <style>
-    /* Flex container for overall layout */
-    .profile-container {
+     /* Flex container for overall layout */
+     .profile-container {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
@@ -117,105 +117,9 @@ show_reading_time: false
         color: red;
         /* Error messages in red */
     }
-
-    /* Modal styling */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.5);
-        justify-content: center;
-        align-items: center;
-    }
-
-    .modal-content {
-        background-color: blue;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 400px;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    video {
-        width: 100%;
-        max-width: 100%;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        margin-bottom: 20px;
-    }
-
-    button {
-        padding: 10px 20px;
-        font-size: 16px;
-        margin-top: 10px;
-    }
-
-    img {
-        width: 100%;
-        max-width: 100%;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        margin-top: 20px;
-    }
-
-    body.light-mode {
-        background-color: white;
-        color: black;
-    }
-
-    /* Default styles */
-    .profile-container {
-        padding: 20px;
-        border-radius: 10px;
-    }
-
-    /* Light Theme Styles */
-    .light-theme .profile-container {
-        background-color: #ffffff;
-        color: #000000;
-        border: 1px solid #ccc;
-    }
-
-    .light-theme .form-section button,
-    .light-theme .form-section select {
-        background-color: #f0f0f0;
-        color: #000;
-    }
-
-    /* Dark Theme Styles */
-    .dark-theme .profile-container {
-        background-color: #333333;
-        color: #ffffff;
-        border: 1px solid #555;
-    }
-
-    .dark-theme .form-section button,
-    .dark-theme .form-section select {
-        background-color: #444;
-        color: #fff;
-    }
 </style>
+
+
 
 <div class="profile-container">
     <!-- Profile Picture Section -->
@@ -237,35 +141,22 @@ show_reading_time: false
 
         <div class="theme-switch">
             <label for="theme">Theme Selection</label>
-            <select name="theme" id="theme">
-                <option value="dark">Dark</option>
-                <option value="light">Light</option>
-            </select>
+            <select name="theme" id="theme"></select>
             <button id="applytheme">Apply Theme</button>
+        </div>
+    
+        
 
-            <button
-            id="side1"
-            onclick="window.location.href='/neptune_frontend/choose_classes'"
-            class="side-btn"
-          >
+        <button id="side1" onclick="window.location.href='/neptune_frontend/choose_classes'" class="side-btn">
             Change Classes
-          </button>
-        <button id="changePasswordButton" onclick="openPasswordModal(event)">Change Password</button>
-        <div id="passwordModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closePasswordModal(event)">&times;</span>
-                <h2>Change Password</h2>
-                <form id="passwordForm">
-                    <label for="currentPassword">Current Password</label>
-                    <input type="password" id="currentPassword" placeholder="Enter current password">
+        </button>
+
                     <label for="newPassword">New Password</label>
                     <input type="password" id="newPassword" placeholder="Enter new password">
                 </form>
             </div>
-            </div>
         </div>
     </div>
-</div>
 
 <!-- Link to CSS -->
 
@@ -275,7 +166,50 @@ show_reading_time: false
     import { pythonURI, fetchOptions } from '{{site.baseurl}}/assets/js/api/config.js';
     // Import functions from config.js
     import { putUpdate, postUpdate, deleteData, logoutUser } from "{{site.baseurl}}/assets/js/api/profile.js";
+    
+        // Ensure this runs after the DOM is fully loaded
+    document.addEventListener("DOMContentLoaded", async () => {
 
+        const themeSelect = document.getElementById("theme");
+
+        // Function to fetch themes from the backend
+        async function fetchThemes() {
+            try {
+                const response = await fetch(`${pythonURI}/api/css/crud`, {
+                    ...fetchOptions,
+                    method: "GET"
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch themes: ${response.status}`);
+                }
+
+                const themes = await response.json();
+
+                // Clear existing options to prevent duplication
+                themeSelect.innerHTML = "";
+
+                // Populate the dropdown list with fetched themes
+                themes.forEach(theme => {
+                    const option = document.createElement("option");
+                    option.value = theme.id;  // Setting the ID as the option's value
+
+                    option.textContent = theme.theme;  // Set the name using the correct property
+
+                    themeSelect.appendChild(option);
+                });
+
+            } catch (error) {
+                console.error("Error fetching themes:", error.message);
+            }
+        }
+
+        // Call fetchThemes when the page loads
+        await fetchThemes();
+    });
+
+    
+                // Fetch themes on page load
     // Function to fetch theme from backend
     window.fetchUserTheme = async function () {
         const URL = pythonURI + "/api/user"; // Adjusted endpoint
@@ -287,31 +221,49 @@ show_reading_time: false
             }
 
             const data = await response.json();
-            console.log("skib data", data)
             return data.theme_mode;
+            console.log("data:", data.theme_mode)
         } catch (error) {
             console.error('Error fetching theme:', error.message);
             return null;
         }
     };
-    window.fetchUserCSS = async function () {
-        const URL = pythonURI + "/api/theme"; // Adjusted endpoint
+
+        // Ensure fetchUserCSS is defined and accessible
+    window.fetchUserCSS = async function (theme) {
+        let cssFilePath = ""; // Variable to store the CSS file path
+        console.log(theme);
+
+        const body = { "id": theme };  // Define the body object separately
+
+        // Log the body to check its content
+        console.log("Request body:", body);
 
         try {
-            const response = await fetch(URL, fetchOptions);
+            const response = await fetch(`${pythonURI}/api/css/read`, {
+                ...fetchOptions,
+                method: "POST",
+                body: JSON.stringify(body)  // Send the body as a string
+            });
+
             if (!response.ok) {
-                throw new Error(`Failed to fetch css: ${response.status}`);
+                throw new Error(`Failed to read theme: ${response.status}`);
             }
 
             const data = await response.json();
-            console.log("css data", data)
-            return data.theme_mode;
+            console.log("Theme read:", data);
+
+            // If the CSS is found, assign it to the variable
+            cssFilePath = data.css || "No CSS found";  // This will store the CSS file path or a fallback message
         } catch (error) {
-            console.error('Error fetching css:', error.message);
-            return null;
+            console.error("Error reading theme:", error.message);
         }
+
+        // Optionally return the CSS file path
+        return cssFilePath;
     };
 
+    // Ensure updateSkibidiTheme function is defined correctly
     document.getElementById('applytheme').addEventListener('click', function () {
         updateSkibidiTheme();
     });
@@ -335,10 +287,16 @@ show_reading_time: false
             if (data.response === 'good') {
                 console.log('Theme changed successfully.');
                 const userTheme = await fetchUserTheme(); // Fetch the theme after updating
-                console.log(userTheme)
+                console.log(userTheme);
+
+                // Fetch the user CSS based on the user theme
+                const userCSS = await fetchUserCSS(userTheme);
+                console.log("UserCSS", userCSS);
+                applyRawCSS(userCSS);
+
+                // Optionally, apply the theme using the CSS path or other logic
                 if (userTheme) {
                     // applyTheme(userTheme); // Apply the theme on the client side
-                    console.log(userTheme)
                 }
             } else {
                 console.error('Failed to change theme.');
@@ -348,15 +306,6 @@ show_reading_time: false
         }
     }
 
-    function applyTheme(theme) {
-        const body = document.body;
-        body.classList.remove('light-theme', 'dark-theme'); // Remove existing theme classes
-        if (theme === 'light') {
-            body.classList.add('light-theme');
-        } else if (theme === 'dark') {
-            body.classList.add('dark-theme');
-        }
-    }
 
     // Initialize profile setup when DOM content is loaded
     document.addEventListener('DOMContentLoaded', async function () {
@@ -368,6 +317,32 @@ show_reading_time: false
         } catch (error) {
             console.error('Initialization error:', error.message);
         }
+    });
+
+    async function applyRawCSS(cssContent) {
+        if (!cssContent || cssContent === "No CSS found") {
+            console.error("No CSS content provided.");
+            return;
+        }
+
+        // Create a new <style> element
+        const style = document.createElement('style');
+        style.id = 'themeStylesheet';  // Set an ID to track the element
+
+        // Insert the raw CSS content into the <style> element
+        style.textContent = cssContent;
+
+        // Append the <style> element to the <head> of the document
+        document.head.appendChild(style);
+    }
+
+    // Example usage after fetching the raw CSS content
+    document.getElementById('applytheme').addEventListener('click', async function () {
+        const themeElement = document.getElementById('theme');
+        const cssContent = await fetchUserCSS(themeElement.value);  // Assume fetchUserCSS() returns the raw CSS content
+        
+        // Apply the fetched raw CSS
+        applyRawCSS(cssContent);
     });
 
 
@@ -483,31 +458,6 @@ show_reading_time: false
             return null;
         }
     };
-
-    // Function to open the modal
-    function openPasswordModal(event) {
-        if (event) event.preventDefault();
-        document.getElementById('passwordModal').style.display = 'flex';
-    }
-
-    // Function to close the modal
-    function closePasswordModal(event) {
-        if (event) event.preventDefault();
-        document.getElementById('passwordModal').style.display = 'none';
-    }
-    // Define modal functions
-    window.openPasswordModal = function (event) {
-        if (event) event.preventDefault();
-        document.getElementById('passwordModal').style.display = 'flex';
-        console.log('Modal opened');
-    };
-
-    window.closePasswordModal = function (event) {
-        if (event) event.preventDefault();
-        document.getElementById('passwordModal').style.display = 'none';
-        console.log('Modal closed');
-    };
-
 
     //MODIFY TO HAVE USERS AUTHENTICATE BEFORE CHANGING PASSWORD
     // Function to handle the password change
