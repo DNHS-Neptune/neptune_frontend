@@ -185,6 +185,9 @@ Below is an overview of Neptune's architecture:
 
 ![System Architecture](/neptune_frontend/images/image.png)
 
+Here is an image of the chatroom in depth, since it uses WebSocket.
+![Chatroom](/neptune_frontend/images/chatroom.png)
+
 ---
 
 Neptune is now deployed. Enjoy your journey among the stars.
