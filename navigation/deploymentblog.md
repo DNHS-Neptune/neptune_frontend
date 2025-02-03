@@ -183,7 +183,7 @@ docker-compose logs
 
 Below is an overview of Neptune's architecture:
 
-![System Architecture](/images/image.png)
+![System Architecture](/neptune_frontend/images/image.png)
 
 ---
 
