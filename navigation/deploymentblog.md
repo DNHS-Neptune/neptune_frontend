@@ -217,7 +217,7 @@ To keep deployment working, good practices in your coding process with verificat
    - **Start Docker Desktop.**
    - **Run:** `docker-compose up` or `sudo docker-compose up` in the VSCode terminal.
    - **Access the application:** 
-      - Open `http://localhost:8212` in your browser 
+      - Open `http://localhost:8204` in your browser 
       - Replace `<port>` with your port number.
    - **Test thoroughly:** Review your changes and team members' changes.
    - **Debug errors:** If any errors occur, they will appear in the browser or VSCode terminal.
@@ -244,7 +244,7 @@ To keep deployment working, good practices in your coding process with verificat
 
 **7. Optional Troubleshooting Checks (AWS EC2):**
 
-   - **Check server status:** `curl localhost:8212`
+   - **Check server status:** `curl localhost:8204`
    - **Verify container status:**
       - `docker-compose ps` 
       - `docker ps` 
@@ -268,10 +268,10 @@ Subdomain: neptune_backend
 Select a unique port for the application. Update all locations:
 
 - **main.py**: Prepare the localhost test server port to run on the same port for consistency.
-Changed port to 8212
+Changed port to 8204
   ```python
   if __name__ == "__main__":
-      app.run(debug=True, host="0.0.0.0", port="8212")
+      app.run(debug=True, host="0.0.0.0", port="8204")
   ```
 
 - **Dockerfile**: Prepare this file to run a server as a virtual machine on the deployment host.
@@ -283,8 +283,8 @@ Changed port to 8212
   COPY . /
   RUN pip install --no-cache-dir -r requirements.txt
   RUN pip install gunicorn
-  ENV GUNICORN_CMD_ARGS="--workers=1 --bind=0.0.0.0:8212"
-  EXPOSE 8212
+  ENV GUNICORN_CMD_ARGS="--workers=1 --bind=0.0.0.0:8204"
+  EXPOSE 8204
   ENV FLASK_ENV=production
   CMD [ "gunicorn", "main:app" ]
   ```
@@ -299,7 +299,7 @@ Changed port to 8212
           env_file:
               - .env
           ports:
-              - "8212:8212"
+              - "8204:8204"
           volumes:
               - ./instance:/instance
           restart: unless-stopped
@@ -312,7 +312,7 @@ Changed port to 8212
       listen [::]:80;
       server_name neptune_backend.nighthawkcodingsociety.com;
       location / {
-          proxy_pass http://localhost:8212; (MINE)
+          proxy_pass http://localhost:8204; (MINE)
           if ($request_method = OPTIONS) {
               add_header "Access-Control-Allow-Credentials" "true" always;
               add_header "Access-Control-Allow-Origin"  "https://nighthawkcoders.github.io" always;
@@ -327,15 +327,15 @@ Changed port to 8212
 
 ### Port (Frontend)
 
-Prepare the frontend to access our domain and ports to match our localhost, port 8212 (OURS OURS OURS OURS OURS), and domain settings.
+Prepare the frontend to access our domain and ports to match our localhost, port 8204 (OURS OURS OURS OURS OURS), and domain settings.
 
 - **assets/api/config.js**:
-Changed port to 8212
+Changed port to 8204
 
   ```javascript
   export var pythonURI;
   if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-      pythonURI = "http://127.0.0.1:8212"; 
+      pythonURI = "http://127.0.0.1:8204"; 
   } else {
       pythonURI = "https://flocker.nighthawkcodingsociety.com";
   }
@@ -352,17 +352,17 @@ Select CSP
 
 ## Application Setup
 
-1. **Finding a Port**: Run `docker ps` to make sure port 8212 is open
-2. **On localhost setup Docker files using VSCode**: Make sure the Dockerfile and docker-compose.yml match port 8212 on AWS EC2.
+1. **Finding a Port**: Run `docker ps` to make sure port 8204 is open
+2. **On localhost setup Docker files using VSCode**: Make sure the Dockerfile and docker-compose.yml match port 8204 on AWS EC2.
 - Use docker-compose up in the repo folder
-- Access the server after it's done building in browser on localhost:8212
+- Access the server after it's done building in browser on localhost:8204
 
 ## Server Setup
 
 1. **Clone backend repo**: `git clone https://github.com/DNHS-Neptune/neptune_backend.git`
 2. **Navigate to repo**: `cd neptune_backend`
 3. **Build site**: `docker-compose up -d --build`
-4. **Test site**: `curl localhost:8212`
+4. **Test site**: `curl localhost:8204`
 
 ### Route 53 DNS
 
@@ -401,7 +401,7 @@ sudo certbot --nginx
 
 ### Troubleshooting checks on AWS EC2
 
-1. **Try to curl**: `curl localhost:8212`
+1. **Try to curl**: `curl localhost:8204`
 2. **Run docker-compose ps**
 3. **Run docker ps**
 
@@ -423,7 +423,7 @@ sudo certbot --nginx
 - Curl provides text response of your requested page
 
 - Look for your application and port: ```docker ps```
-- Verify your application is working: ```curl localhost:8212```
+- Verify your application is working: ```curl localhost:8204```
 
 <h3>Note</h3>
 
@@ -458,7 +458,7 @@ Go to AWS Route 53 and set up a DNS subdomain for the backend server.
         listen [::]:80;
         server_name neptune_backend.nighthawkcodingsociety.com;
         location / {
-            proxy_pass http://localhost:8212;
+            proxy_pass http://localhost:8204;
             if ($request_method = OPTIONS) {
                 add_header "Access-Control-Allow-Credentials" "true" always;
                 add_header "Access-Control-Allow-Origin"  "https://nighthawkcoders.github.io" always;
