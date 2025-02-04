@@ -574,4 +574,9 @@ Steps:
     ```bash
     sudo tail -f /var/log/nginx/error.log
     ```
+
+Deployment Tech talk:
+Username: Ubuntu
+Username: Ubuntu14*&*41 
+Three musketterss
   
