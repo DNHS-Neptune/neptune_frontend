@@ -257,3 +257,64 @@ Neptune is now deployed. Enjoy your journey among the stars.
 ## Performance Tuning:
 - Monitor application performance and identify areas for improvement.
 - Optimize database queries, cache frequently accessed data, and use efficient algorithms.
+
+
+## Changing Code in VSCode
+
+To keep deployment working, good practices in your coding process with verifications prior to pushing code to GitHub will save a lot of troubleshooting.
+
+**1. Pull Changes:**
+
+   - **Before making changes:** 
+      - **`git pull`** in the VSCode terminal. 
+      - This ensures you have the latest code from your team and prevents merge conflicts.
+
+**2. Local Testing:**
+
+   - **Open terminal in VSCode:** `cd` into your repository.
+   - **Run:** `python3 main.py` 
+   - This starts your Flask application locally.
+   - **Open the local address in your browser:** View your changes live.
+   - **Make changes:** Refer to your running site frequently to see changes in real-time.
+
+**3. Commit Changes:**
+
+   - **Commit your changes locally:** Use meaningful commit messages.
+   - **Do not sync or push yet:** Committing allows you to pull team changes for further verification.
+
+**4. Docker Desktop Testing:**
+
+   - **Start Docker Desktop.**
+   - **Run:** `docker-compose up` or `sudo docker-compose up` in the VSCode terminal.
+   - **Access the application:** 
+      - Open `http://localhost:8212` in your browser 
+      - Replace `<port>` with your port number.
+   - **Test thoroughly:** Review your changes and team members' changes.
+   - **Debug errors:** If any errors occur, they will appear in the browser or VSCode terminal.
+   - **Note:** Docker Desktop can consume resources. Close it after testing if you're unplugged.
+
+**5. Push to GitHub:**
+
+   - **If all tests pass:** 
+      - **Sync changes** from the VSCode UI or **`git push`** from the terminal.
+   - **If you encounter issues:** 
+      - **`git status`** to review open files.
+      - **Resolve conflicts:** Use `git restore` or `git commit`.
+      - **`git pull`** again and repeat steps 2-4.
+
+**6. Deploying to AWS EC2:**
+
+   - **In your AWS EC2 terminal:**
+      - **Navigate:** `cd ~/neptune_frontend`
+      - **Stop the current deployment:** `docker-compose down`
+      - **Verify downtime:** The server should be down (502 Bad Gateway).
+      - **Pull changes:** `git pull`
+      - **Rebuild:** `docker-compose up -d --build` 
+      - **Test again:** The server should be updated and running.
+
+**7. Optional Troubleshooting Checks (AWS EC2):**
+
+   - **Check server status:** `curl localhost:8212`
+   - **Verify container status:**
+      - `docker-compose ps` 
+      - `docker ps` 
