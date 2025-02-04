@@ -9,9 +9,9 @@ permalink: /posts/
 <script>
   var pythonURI;
   if (location.hostname === "localhost") {
-    pythonURI = "http://localhost:8212";
+    pythonURI = "http://localhost:8204";
   } else if (location.hostname === "127.0.0.1") {
-    pythonURI = "http://127.0.0.1:8212";
+    pythonURI = "http://127.0.0.1:8204";
   } else {
     pythonURI = "https://flocker.nighthawkcodingsociety.com";
   }
@@ -26,7 +26,7 @@ permalink: /posts/
     },
   };
 
-  const socket = io.connect("http://127.0.0.1:8212");
+  const socket = io.connect("http://127.0.0.1:8204");
 
   socket.on("connect", () => {
     console.log("Connected to the server");
