@@ -337,7 +337,7 @@ Changed port to 8204
   if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
       pythonURI = "http://127.0.0.1:8204"; 
   } else {
-      pythonURI = "https://flocker.nighthawkcodingsociety.com";
+      pythonURI = "https://neptune.stu.nighthawkcodingsociety.com";
   }
   ```
 
