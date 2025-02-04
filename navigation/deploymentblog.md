@@ -244,8 +244,6 @@ sudo certbot --nginx
 2. **Run docker-compose ps**
 3. **Run docker ps**
 
-# AWS Flowchart (How it works/Process)
-
 <h2>First time Install</h2>
 
 <h3>1. In your project directory, create a .env file with passwords of the users</h3>
