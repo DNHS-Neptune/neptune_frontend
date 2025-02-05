@@ -232,7 +232,7 @@ permalink: /ai_homework_bot/
     } else if (location.hostname === "127.0.0.1") {
         pythonURI = "http://127.0.0.1:8204";
     } else {
-        pythonURI = "https://neptune.stu.nighthawkcodingsociety.com";
+        pythonURI = "http://neptune.stu.nighthawkcodingsociety.com";
     }
 
     const fetchOptions = {
