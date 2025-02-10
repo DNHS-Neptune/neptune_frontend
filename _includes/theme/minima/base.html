@@ -96,25 +96,7 @@
 
   <script src="/neptune_frontend/assets/js/anime.min.js"></script>
   <script defer>
-    let _authed;
     document.addEventListener("DOMContentLoaded", function () {
-      document.getElementsByClassName("wrapper")[1].style.opacity = 0;
-      document.getElementsByClassName("wrapper")[1].style.display = "none";
-      document.querySelector("header").style.opacity = 0;
-      document.querySelector("header").style.display = "none";
-
-      let cookies = document.cookie.split("; ");
-      cookies.forEach((cookie) => {
-        const [key, value] = cookie.split("=");
-        if (key === "jwt_python_flask") {
-          _authed = true;
-        }
-      });
-
-      if (!_authed && !window.location.href.endsWith("login")) {
-        window.location.href = "/neptune_frontend/login";
-      }
-
       anime({
         targets: ".line-drawing-demo .lines path",
         strokeDashoffset: [anime.setDashoffset, 0],
