@@ -283,16 +283,15 @@ show_reading_time: false
     // Initialize profile setup when DOM content is loaded
     document.addEventListener('DOMContentLoaded', async function () {
         try {
-            const userTheme = await fetchUserTheme();  // Fetch the user's theme setting from the backend
-            if (userTheme) {
-                const userCSS = await fetchUserCSS(userTheme);  // Fetch the corresponding CSS for the theme
-                applyRawCSS(userCSS);  // Apply the fetched theme's CSS
+            const userTheme = await fetchUserTheme();
+            const userCSS = await fetchUserCSS(userTheme);
+            if (userCSS) {
+                applyRawCSS(userCSS); // Apply the fetched theme on load
             }
         } catch (error) {
             console.error('Initialization error:', error.message);
         }
     });
-
 
     function applyRawCSS(cssContent) {
     if (!cssContent || cssContent === "No CSS found") {
