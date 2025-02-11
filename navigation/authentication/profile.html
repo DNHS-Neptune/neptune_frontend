@@ -269,7 +269,7 @@ show_reading_time: false
 
                 // Optionally, apply the theme using the CSS path or other logic
                 if (userTheme) {
-                    // applyTheme(userTheme); // Apply the theme on the client side
+                    applyRawCSS(userCSS);
                 }
             } else {
                 console.error('Failed to change theme.');
@@ -285,7 +285,7 @@ show_reading_time: false
         try {
             const userTheme = await fetchUserTheme();
             if (userTheme) {
-                applyTheme(userTheme); // Apply the fetched theme on load
+                aapplyRawCSS(userCSS); // Apply the fetched theme on load
             }
         } catch (error) {
             console.error('Initialization error:', error.message);
