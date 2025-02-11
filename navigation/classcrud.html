@@ -29,14 +29,10 @@ show_reading_time: false
 </table>
 
 <script>
-    var pythonURI;
-    if (location.hostname === "localhost") {
-        pythonURI = "http://localhost:8204";
-    } else if (location.hostname === "127.0.0.1") {
-        pythonURI = "http://127.0.0.1:8204";
-    } else {
-        pythonURI = "https://neptune.stu.nighthawkcodingsociety.com";
-    }
+    // Import fetchOptions from config.js
+    import { pythonURI, fetchOptions } from '{{site.baseurl}}/assets/js/api/config.js';
+    // Import functions from config.js
+    import { putUpdate, postUpdate, deleteData, logoutUser } from "{{site.baseurl}}/assets/js/api/profile.js";
 
     const fetchOptions = {
         method: "GET", 
