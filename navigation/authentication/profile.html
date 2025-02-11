@@ -94,9 +94,6 @@ show_reading_time: false
     }
   </style>
 
-
-
-
 <div class="profile-container">
     <!-- Profile Picture Section -->
     <div class="image-container" id="profileImageBox" onclick="triggerFileInput()">
@@ -240,7 +237,7 @@ show_reading_time: false
     };
 
     // Ensure updateSkibidiTheme function is defined correctly
-    document.getElementById('applytheme').addEventListener('click', function () {
+    document.getElementById('applyRawCSS').addEventListener('click', function () {
         updateSkibidiTheme();
     });
 
@@ -295,31 +292,35 @@ show_reading_time: false
         }
     });
 
-    async function applyRawCSS(cssContent) {
-        if (!cssContent || cssContent === "No CSS found") {
-            console.error("No CSS content provided.");
-            return;
-        }
-
-        // Create a new <style> element
-        const style = document.createElement('style');
-        style.id = 'themeStylesheet';  // Set an ID to track the element
-
-        // Insert the raw CSS content into the <style> element
-        style.textContent = cssContent;
-
-        // Append the <style> element to the <head> of the document
-        document.head.appendChild(style);
+    function applyRawCSS(cssContent) {
+    if (!cssContent || cssContent === "No CSS found") {
+        console.warn("No CSS content provided.");
+        return;
     }
 
-    // Example usage after fetching the raw CSS content
-    document.getElementById('applytheme').addEventListener('click', async function () {
-        const themeElement = document.getElementById('theme');
-        const cssContent = await fetchUserCSS(themeElement.value);  // Assume fetchUserCSS() returns the raw CSS content
-        
-        // Apply the fetched raw CSS
-        applyRawCSS(cssContent);
-    });
+    // Remove existing style element if it exists
+    let existingStyle = document.getElementById("themeStylesheet");
+    if (existingStyle) {
+        existingStyle.remove();
+    }
+
+    // Create a new style element
+    let style = document.createElement("style");
+    style.id = "themeStylesheet";
+    style.textContent = cssContent;
+
+    // Append to head (if it exists) or body as fallback
+    if (document.head) {
+        document.head.appendChild(style);
+    } else {
+        document.body.appendChild(style);
+    }
+
+    console.log("Applied new theme CSS.");
+}
+
+
+
 
 
 
