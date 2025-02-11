@@ -237,7 +237,7 @@ show_reading_time: false
     };
 
     // Ensure updateSkibidiTheme function is defined correctly
-    document.getElementById('applyRawCSS').addEventListener('click', function () {
+    document.getElementById('applytheme').addEventListener('click', function () {
         updateSkibidiTheme();
     });
 
@@ -269,7 +269,7 @@ show_reading_time: false
 
                 // Optionally, apply the theme using the CSS path or other logic
                 if (userTheme) {
-                    applyRawCSS(userCSS);
+                    // applyRawCSS(userCSS);
                 }
             } else {
                 console.error('Failed to change theme.');
@@ -283,14 +283,16 @@ show_reading_time: false
     // Initialize profile setup when DOM content is loaded
     document.addEventListener('DOMContentLoaded', async function () {
         try {
-            const userTheme = await fetchUserTheme();
+            const userTheme = await fetchUserTheme();  // Fetch the user's theme setting from the backend
             if (userTheme) {
-                aapplyRawCSS(userCSS); // Apply the fetched theme on load
+                const userCSS = await fetchUserCSS(userTheme);  // Fetch the corresponding CSS for the theme
+                applyRawCSS(userCSS);  // Apply the fetched theme's CSS
             }
         } catch (error) {
             console.error('Initialization error:', error.message);
         }
     });
+
 
     function applyRawCSS(cssContent) {
     if (!cssContent || cssContent === "No CSS found") {
