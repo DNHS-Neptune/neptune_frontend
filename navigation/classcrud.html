@@ -45,8 +45,8 @@ show_reading_time: false
         },
     };
 
-    // Create a new class entry
-    function createClass() {
+    // Create a new class entry\
+    window.createClass = async function () {
         const pick = prompt("Enter class pick:");
 
         if (!pick) return;
@@ -63,7 +63,7 @@ show_reading_time: false
     }
 
     // Update the pick of a class
-    async function updateMenu(id) {
+    window.updateMenu = async function () {
         let newPick = prompt("Enter new pick:");
         if (!newPick) return;
 
@@ -79,7 +79,7 @@ show_reading_time: false
     }
 
     // Delete a class from the table
-    function deleteClass(id) {
+    window.deleteClass = async function () {
         fetch(`${pythonURI}/api/class/add`, {
             ...fetchOptions,
             method: "DELETE",
@@ -91,7 +91,7 @@ show_reading_time: false
     }
 
     // Display all classes on the page
-    function displayClass(classData) {
+    window.displayClass = async function () {
         const tableBody = document.getElementById("classBody");
         const row = document.createElement("tr");
         row.setAttribute("data-id", classData.id);
