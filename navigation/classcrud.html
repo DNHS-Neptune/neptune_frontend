@@ -68,32 +68,42 @@ show_reading_time: false
 
 
     // Update the pick of a class
-    window.updateMenu = async function () {
-        let newPick = prompt("Enter new pick:");
-        if (!newPick) return;
+    window.updateMenu = async function (id) {
+    let newPick = prompt("Enter new pick:");
+    if (!newPick) return;
 
-        await fetch(`${pythonURI}/api/class/add`, {
-            ...fetchOptions,
-            method: "PUT",
-            body: JSON.stringify({ id, pick: newPick }),
-        });
+    await fetch(`${pythonURI}/api/class/add`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: id, pick: newPick }), // Fix: Pass ID correctly
+    });
 
-        // Update the pick in the table directly
-        const row = document.querySelector(`[data-id="${id}"]`);
+    // Update the pick in the table directly
+    const row = document.querySelector(`[data-id="${id}"]`);
+    if (row) {
         row.querySelector('.pick').textContent = newPick;
     }
+};
+
 
     // Delete a class from the table
-    window.deleteClass = async function () {
-        fetch(`${pythonURI}/api/class/add`, {
-            ...fetchOptions,
-            method: "DELETE",
-            body: JSON.stringify({ id }),
-        });
+    window.deleteClass = async function (id) {
+    await fetch(`${pythonURI}/api/class/add`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: id }), // Fix: Pass ID correctly
+    });
 
-        const row = document.querySelector(`[data-id="${id}"]`);
+    // Remove the row from the table
+    const row = document.querySelector(`[data-id="${id}"]`);
+    if (row) {
         row.remove();
     }
+};
 
     // Display all classes on the page
     window.displayClass = function(classData) {  
