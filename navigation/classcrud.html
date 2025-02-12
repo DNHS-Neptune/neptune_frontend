@@ -49,22 +49,23 @@ show_reading_time: false
         },
     };
 
-    // Create a new class entry\
     window.createClass = async function () {
-        const pick = prompt("Enter class pick:");
+    const pick = prompt("Enter class pick:");
+    if (!pick) return;
 
-        if (!pick) return;
+    fetch(`${pythonURI}/api/class/add`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ pick }),
+    })
+    .then((res) => res.json())
+    .then((newClass) => {
+        displayClass(newClass);
+    });
+}
 
-        fetch(`${pythonURI}/api/class/add`, {
-            ...fetchOptions,
-            method: "POST",
-            body: JSON.stringify({pick}),
-        })
-        .then((res) => res.json())
-        .then((newClass) => {
-            displayClass(newClass);
-        });
-    }
 
     // Update the pick of a class
     window.updateMenu = async function () {
@@ -95,45 +96,46 @@ show_reading_time: false
     }
 
     // Display all classes on the page
-    window.displayClass = async function () {
-        const tableBody = document.getElementById("classBody");
-        const row = document.createElement("tr");
-        row.setAttribute("data-id", classData.id);
+    window.displayClass = function(classData) {  
+    const tableBody = document.getElementById("classBody");
+    const row = document.createElement("tr");
+    row.setAttribute("data-id", classData.id);
 
-        const idCell = document.createElement("td");
-        idCell.textContent = classData.id;
+    const idCell = document.createElement("td");
+    idCell.textContent = classData.id;
 
-        const periodCell = document.createElement("td");
-        periodCell.textContent = classData.period;
+    const periodCell = document.createElement("td");
+    periodCell.textContent = classData.period;
 
-        const pickCell = document.createElement("td");
-        pickCell.classList.add('pick');
-        pickCell.textContent = classData.pick;
+    const pickCell = document.createElement("td");
+    pickCell.classList.add('pick');
+    pickCell.textContent = classData.pick;
 
-        const userCell = document.createElement("td");
-        userCell.textContent = classData.user;
+    const userCell = document.createElement("td");
+    userCell.textContent = classData.user;
 
-        const updateCell = document.createElement("td");
-        const updateButton = document.createElement("button");
-        updateButton.textContent = "Update";
-        updateButton.onclick = () => updateMenu(classData.id);
-        updateCell.appendChild(updateButton);
+    const updateCell = document.createElement("td");
+    const updateButton = document.createElement("button");
+    updateButton.textContent = "Update";
+    updateButton.onclick = () => updateMenu(classData.id);
+    updateCell.appendChild(updateButton);
 
-        const deleteCell = document.createElement("td");
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Delete";
-        deleteButton.onclick = () => deleteClass(classData.id);
-        deleteCell.appendChild(deleteButton);
+    const deleteCell = document.createElement("td");
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.onclick = () => deleteClass(classData.id);
+    deleteCell.appendChild(deleteButton);
 
-        row.appendChild(idCell);
-        row.appendChild(periodCell);
-        row.appendChild(pickCell);
-        row.appendChild(userCell);
-        row.appendChild(updateCell);
-        row.appendChild(deleteCell);
+    row.appendChild(idCell);
+    row.appendChild(periodCell);
+    row.appendChild(pickCell);
+    row.appendChild(userCell);
+    row.appendChild(updateCell);
+    row.appendChild(deleteCell);
 
-        tableBody.appendChild(row);
-    }
+    tableBody.appendChild(row);
+}
+
 
     // Fetch and display existing classes from the backend
     fetch(`${pythonURI}/api/class/add`, fetchOptions)
