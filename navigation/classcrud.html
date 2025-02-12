@@ -53,27 +53,39 @@ show_reading_time: false
     const pick = prompt("Enter class pick:");
     if (!pick) return;
 
-    fetch(`${pythonURI}/api/class/add`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ pick }),
-        credentials: "include",  // Add this to ensure cookies or session data are included
-    })
-    .then((res) => {
+    // Assume user is authenticated and their username is available globally or through session
+    const user = "currentUserName"; // Replace this with the actual method to fetch the user's name
+
+    const requestBody = {
+        pick: pick,
+        user: user, // Automatically send the username with the request
+    };
+
+    console.log("Sending request with body:", requestBody);  // Debugging line
+
+    try {
+        const res = await fetch(`${pythonURI}/api/class/add`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+            credentials: "include",  // Include credentials like cookies (for authenticated user)
+        });
+
         if (!res.ok) {
+            const errorData = await res.json();
+            console.error("Error response from server:", errorData);  // Print server error details
             throw new Error("Failed to create class");
         }
-        return res.json();
-    })
-    .then((newClass) => {
+
+        const newClass = await res.json();
         displayClass(newClass);
-    })
-    .catch((err) => {
+    } catch (err) {
         console.error("Error:", err);
-    });
+    }
 };
+
 
 
 
