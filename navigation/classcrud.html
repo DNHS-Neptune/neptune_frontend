@@ -59,12 +59,22 @@ show_reading_time: false
             "Content-Type": "application/json",
         },
         body: JSON.stringify({ pick }),
+        credentials: "include",  // Add this to ensure cookies or session data are included
     })
-    .then((res) => res.json())
+    .then((res) => {
+        if (!res.ok) {
+            throw new Error("Failed to create class");
+        }
+        return res.json();
+    })
     .then((newClass) => {
         displayClass(newClass);
+    })
+    .catch((err) => {
+        console.error("Error:", err);
     });
-}
+};
+
 
 
     // Update the pick of a class
