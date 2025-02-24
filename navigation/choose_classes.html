@@ -9,14 +9,14 @@ show_reading_time: false
 
 <style>
   .content {
-    position: relative; /* Ensures dropdown stays inside */
     flex-grow: 1;
     background: #222;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     min-width: 400px;
-    overflow: hidden; /* Optional: prevents breakout */
+    max-width: 600px; /* Adjust as needed */
+    overflow: hidden;
   }
 
   .sidebar {
@@ -24,6 +24,12 @@ show_reading_time: false
     flex-direction: column;
     gap: 20px;
   }
+
+  .container {
+  display: flex;
+  align-items: flex-start; /* Aligns content to the top */
+  gap: 20px; /* Adds spacing between the sidebar and content */
+}
 
   .content {
     flex-grow: 1;
