@@ -21,31 +21,31 @@ show_reading_time: false
     th {
         background-color: #f4f4f4;
     }
-    input {
-        padding: 5px;
-        margin-right: 10px;
-    }
-    .btn {
+    button {
         padding: 5px 10px;
-        cursor: pointer;
+        margin: 2px;
         border: none;
-        color: white;
-        border-radius: 5px;
+        cursor: pointer;
+        border-radius: 4px;
     }
-    .btn-add { background-color: #4CAF50; }
-    .btn-update { background-color: #f0ad4e; }
-    .btn-delete { background-color: #d9534f; }
+    .add-class-form {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    .update-input {
+        display: none;
+    }
+    .update-input input {
+        width: 80px;
+    }
 </style>
 
-<h2>Manage Classes</h2>
-
-<input type="text" id="pickInput" placeholder="Enter class pick">
-<button class="btn btn-add" onclick="createClass()">Add Class</button>
-
-<table>
+<table id="classTable">
     <thead>
         <tr>
             <th>ID</th>
+            <th>Period</th>
             <th>Pick</th>
             <th>User</th>
             <th>Update</th>
@@ -55,9 +55,14 @@ show_reading_time: false
     <tbody id="classBody"></tbody>
 </table>
 
+<div class="add-class-form">
+    <input type="text" id="classPick" placeholder="Enter class pick">
+    <button onclick="createClass()" style="background-color: #28a745; color: white;">Add Class</button>
+</div>
+
 <script>
     var pythonURI = location.hostname.includes("localhost") || location.hostname === "127.0.0.1" 
-        ? "http://127.0.0.1:8204" 
+        ? "http://localhost:8204" 
         : "https://neptune.stu.nighthawkcodingsociety.com";
 
     const fetchOptions = {
@@ -65,18 +70,15 @@ show_reading_time: false
         mode: "cors", 
         cache: "default", 
         credentials: "include", 
-        headers: {
-            "Content-Type": "application/json",
-            "X-Origin": "client",
-        },
+        headers: { "Content-Type": "application/json", "X-Origin": "client" },
     };
 
     window.createClass = async function () {
-        const pick = document.getElementById("pickInput").value.trim();
+        const pick = document.getElementById("classPick").value;
         if (!pick) return;
+        const user = "currentUserName"; 
 
-        const user = "currentUserName"; // Replace with actual user fetching method
-        const requestBody = { pick: pick, user: user };
+        const requestBody = { pick, user };
 
         try {
             const res = await fetch(`${pythonURI}/api/class/add`, {
@@ -87,56 +89,71 @@ show_reading_time: false
             });
 
             if (!res.ok) throw new Error("Failed to create class");
+
             const newClass = await res.json();
             displayClass(newClass);
-            document.getElementById("pickInput").value = "";
+            document.getElementById("classPick").value = "";
         } catch (err) {
             console.error("Error:", err);
         }
     };
 
-    window.updateMenu = async function (id) {
-        const row = document.querySelector(`[data-id="${id}"]`);
+    window.updateMenu = function (id) {
+        const row = document.querySelector(`[data-id='${id}']`);
         const pickCell = row.querySelector(".pick");
-        const newPick = prompt("Enter new pick:", pickCell.textContent);
-        if (!newPick) return;
+        const inputField = row.querySelector(".update-input");
+        const newPickInput = inputField.querySelector("input");
+        inputField.style.display = "inline";
+        newPickInput.focus();
 
-        await fetch(`${pythonURI}/api/class/add`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: id, pick: newPick }),
+        newPickInput.addEventListener("keypress", async function (event) {
+            if (event.key === "Enter") {
+                const newPick = newPickInput.value;
+                if (!newPick) return;
+                await fetch(`${pythonURI}/api/class/add`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id, pick: newPick }),
+                });
+                pickCell.textContent = newPick;
+                inputField.style.display = "none";
+            }
         });
-
-        pickCell.textContent = newPick;
     };
 
     window.deleteClass = async function (id) {
         await fetch(`${pythonURI}/api/class/add`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: id }),
+            body: JSON.stringify({ id }),
         });
-
-        document.querySelector(`[data-id="${id}"]`).remove();
+        document.querySelector(`[data-id='${id}']`).remove();
     };
 
-    window.displayClass = function (classData) {
+    window.displayClass = function (classData) {  
         const tableBody = document.getElementById("classBody");
         const row = document.createElement("tr");
         row.setAttribute("data-id", classData.id);
 
         row.innerHTML = `
             <td>${classData.id}</td>
+            <td>${classData.period}</td>
             <td class="pick">${classData.pick}</td>
             <td>${classData.user}</td>
-            <td><button class="btn btn-update" onclick="updateMenu(${classData.id})">Update</button></td>
-            <td><button class="btn btn-delete" onclick="deleteClass(${classData.id})">Delete</button></td>
+            <td>
+                <button onclick="updateMenu(${classData.id})" style="background-color: #ffc107;">Update</button>
+                <span class="update-input">
+                    <input type="text" placeholder="New pick">
+                </span>
+            </td>
+            <td>
+                <button onclick="deleteClass(${classData.id})" style="background-color: #dc3545; color: white;">Delete</button>
+            </td>
         `;
-
         tableBody.appendChild(row);
     };
 
     fetch(`${pythonURI}/api/class/add`, fetchOptions)
-        .then((res) => res.json())
-        .then((classes) => classes.forEach(displayClass));
+        .then(res => res.json())
+        .then(classes => classes.forEach(displayClass));
 </script>
