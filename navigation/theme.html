@@ -6,158 +6,167 @@ menu: nav/home.html
 search_exclude: true
 show_reading_time: false
 ---
-    <title>Theme Management</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        .action-button {
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-    </style>
-    <table>
-            <tr>
-                <th>Action</th>
-                <th>Theme</th>
-                <th>CSS</th>
-                <th>Submit</th>
-            </tr>
-            <tr>
-                <td>Add</td>
-                <td><input type="text" id="addTheme" placeholder="Enter Theme"></td>
-                <td><input type="text" id="addCSS"></td>
-                <td><button class="action-button" onclick="addTheme()">Add</button></td>
-            </tr>
-            <tr>
-                <td>Update</td>
-                <td><input type="text" id="updateTheme" placeholder="Enter Theme"></td>
-                <td><input type="text" id="updateCSS" placeholder="Enter CSS"></td>
-                <td><button class="action-button" onclick="updateTheme()">Update</button></td>
-            </tr>
-            <tr>
-                <td>Read</td>
-                <td><input type="text" id="readTheme" placeholder="Enter Theme"></td>
-                <td><input type="text" id="readCSS" disabled placeholder="CSS will be displayed here"></td>
-                <td><button class="action-button" onclick="readTheme()">Read</button></td>
-            </tr>
-            <tr>
-                <td>Delete</td>
-                <td><input type="text" id="deleteTheme" placeholder="Enter Theme"></td>
-                <td><input type="text" id="deleteCSS" disabled placeholder="CSS cannot be entered"></td>
-                <td><button class="action-button" onclick="deleteTheme()">Delete</button></td>
-            </tr>
-    </table>
 
-    <script type="module">
+<title>Theme Management</title>
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f4f4f4;
+    }
+    .action-button {
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+    .update-input {
+        width: 100%;
+    }
+</style>
+
+<h2>Manage Themes</h2>
+
+<!-- Table for Adding a Theme -->
+<table>
+    <tr>
+        <th>Action</th>
+        <th>Theme</th>
+        <th>Primary Color</th>
+        <th>Submit</th>
+    </tr>
+    <tr>
+        <td>Add</td>
+        <td><input type="text" id="addTheme" placeholder="Enter Theme"></td>
+        <td><input type="color" class="color-picker" id="color-${theme.theme}" value="${theme.primaryColor}" onchange="updateTheme('${theme.theme}')"></td>
+        <td><button class="action-button" onclick="addTheme()">Add</button></td>
+    </tr>
+</table>
+
+<!-- Table for Listing Themes -->
+<h3>Available Themes</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Theme</th>
+            <th>Primary Color</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="themeList">
+        <!-- Dynamic Content -->
+    </tbody>
+</table>
+
+<script type="module">
     import { pythonURI, fetchOptions } from '{{site.baseurl}}/assets/js/api/config.js';
-    // Import functions from config.js
-    import { putUpdate, postUpdate, deleteData, logoutUser } from "{{site.baseurl}}/assets/js/api/profile.js";
 
-       // Attach functions to the window object for global access
-window.addTheme = async function () {
-    const theme = document.getElementById("addTheme").value;
-    const css = document.getElementById("addCSS").value;
+    async function fetchThemes() {
+        try {
+            const response = await fetch(`${pythonURI}/api/css/crud`, {
+                ...fetchOptions,
+                method: "GET"
+            });
+            if (!response.ok) throw new Error(`Failed to fetch themes: ${response.status}`);
 
-    try {
-        const response = await fetch(`${pythonURI}/api/css/crud`, {
-            ...fetchOptions,
-            method: "POST",
-            body: JSON.stringify({ theme, css })
-        });
+            const themes = await response.json();
+            const themeList = document.getElementById("themeList");
+            themeList.innerHTML = "";
 
-        if (!response.ok) {
-            throw new Error(`Failed to add theme: ${response.status}`);
+            themes.forEach(theme => {
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${theme.theme}</td>
+                    <td><input type="color" class="color-picker" id="color-${theme.theme}" value="${theme.primaryColor}" onchange="updateTheme('${theme.theme}')"></td>
+                    <td>
+                        <button class="action-button" onclick="deleteTheme('${theme.theme}')">Delete</button>
+                    </td>
+                `;
+
+                themeList.appendChild(row);
+            });
+        } catch (error) {
+            console.error("Error fetching themes:", error);
         }
-
-        const data = await response.json();
-        console.log("Theme added:", data);
-        alert("Theme added successfully!");
-    } catch (error) {
-        console.error("Error adding theme:", error.message);
-        alert("Failed to add theme.");
     }
-};
 
-window.updateTheme = async function () {
-    const theme = document.getElementById("updateTheme").value;
-    const css = document.getElementById("updateCSS").value;
+    window.addTheme = async function () {
+        const theme = document.getElementById("addTheme").value;
+        const primaryColor = document.getElementById("addColor").value;
+        const css = generateCSS(primaryColor);
 
-    try {
-        const response = await fetch(`${pythonURI}/api/css/crud`, {
-            ...fetchOptions,
-            method: "PUT",
-            body: JSON.stringify({ theme, css })
-        });
+        try {
+            const response = await fetch(`${pythonURI}/api/css/crud`, {
+                ...fetchOptions,
+                method: "POST",
+                body: JSON.stringify({ theme, css })
+            });
 
-        if (!response.ok) {
-            throw new Error(`Failed to update theme: ${response.status}`);
+            if (!response.ok) throw new Error(`Failed to add theme: ${response.status}`);
+
+            alert("Theme added successfully!");
+            fetchThemes(); // Refresh the list
+        } catch (error) {
+            console.error("Error adding theme:", error.message);
+            alert("Failed to add theme.");
         }
+    };
 
-        const data = await response.json();
-        console.log("Theme updated:", data);
-        alert("Theme updated successfully!");
-    } catch (error) {
-        console.error("Error updating theme:", error.message);
-        alert("Failed to update theme.");
-    }
-};
+    window.updateTheme = async function (theme) {
+        const primaryColor = document.getElementById(`color-${theme}`).value;
+        const css = generateCSS(primaryColor);
 
-window.readTheme = async function () {
-    const theme = document.getElementById("readTheme").value;
+        try {
+            const response = await fetch(`${pythonURI}/api/css/crud`, {
+                ...fetchOptions,
+                method: "PUT",
+                body: JSON.stringify({ theme, css })
+            });
 
-    try {
-        const response = await fetch(`${pythonURI}/api/css/read`, {
-            ...fetchOptions,
-            method: "POST",
-            body: JSON.stringify({ theme })
-        });
+            if (!response.ok) throw new Error(`Failed to update theme: ${response.status}`);
 
-        if (!response.ok) {
-            throw new Error(`Failed to read theme: ${response.status}`);
+            alert("Theme updated successfully!");
+        } catch (error) {
+            console.error("Error updating theme:", error.message);
+            alert("Failed to update theme.");
         }
+    };
 
-        const data = await response.json();
-        console.log("Theme read:", data);
-        console.log(data.css)
-        document.getElementById("readCSS").value = data.css || "No CSS found";
-        alert("Theme read successfully!");
-    } catch (error) {
-        console.error("Error reading theme:", error.message);
-        alert("Failed to read theme.");
-    }
-};
+    window.deleteTheme = async function (theme) {
+        if (!confirm(`Are you sure you want to delete the theme "${theme}"?`)) return;
 
-window.deleteTheme = async function () {
-    const theme = document.getElementById("deleteTheme").value;
+        try {
+            const response = await fetch(`${pythonURI}/api/css/crud`, {
+                ...fetchOptions,
+                method: "DELETE",
+                body: JSON.stringify({ theme })
+            });
 
-    try {
-        const response = await fetch(`${pythonURI}/api/css/crud`, {
-            ...fetchOptions,
-            method: "DELETE",
-            body: JSON.stringify({ theme })
-        });
+            if (!response.ok) throw new Error(`Failed to delete theme: ${response.status}`);
 
-        if (!response.ok) {
-            throw new Error(`Failed to delete theme: ${response.status}`);
+            alert("Theme deleted successfully!");
+            fetchThemes(); // Refresh the list
+        } catch (error) {
+            console.error("Error deleting theme:", error.message);
+            alert("Failed to delete theme.");
         }
+    };
 
-        const data = await response.json();
-        console.log("Theme deleted:", data);
-        alert("Theme deleted successfully!");
-    } catch (error) {
-        console.error("Error deleting theme:", error.message);
-        alert("Failed to delete theme.");
+    function generateCSS(primaryColor) {
+        return `
+            .profile-container { background-color: ${primaryColor}; }
+            #profileImageBox { border: 4px solid ${primaryColor}; }
+            .file-icon, label, input, #theme, #applytheme { color: ${primaryColor}; border-color: ${primaryColor}; }
+            #applytheme, .side-btn { background-color: ${primaryColor}; }
+            #applytheme:hover, .side-btn:hover { background-color: darken(${primaryColor}, 10%); }
+        `;
     }
-};
 
-    </script>
-</html>
+    fetchThemes();
+</script>

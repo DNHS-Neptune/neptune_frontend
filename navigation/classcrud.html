@@ -60,16 +60,6 @@ show_reading_time: false
         ? "http://127.0.0.1:8204" 
         : "https://neptune.stu.nighthawkcodingsociety.com";
 
-    const fetchOptions = {
-        method: "GET", 
-        mode: "cors", 
-        cache: "default", 
-        credentials: "include", 
-        headers: {
-            "Content-Type": "application/json",
-            "X-Origin": "client",
-        },
-    };
 
     window.createClass = async function () {
         const pick = document.getElementById("pickInput").value.trim();
