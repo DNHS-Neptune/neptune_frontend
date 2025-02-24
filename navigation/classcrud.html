@@ -7,11 +7,45 @@ search_exclude: true
 show_reading_time: false
 ---
 
-<table id="classTable">
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+    }
+    th {
+        background-color: #f4f4f4;
+    }
+    input {
+        padding: 5px;
+        margin-right: 10px;
+    }
+    .btn {
+        padding: 5px 10px;
+        cursor: pointer;
+        border: none;
+        color: white;
+        border-radius: 5px;
+    }
+    .btn-add { background-color: #4CAF50; }
+    .btn-update { background-color: #f0ad4e; }
+    .btn-delete { background-color: #d9534f; }
+</style>
+
+<h2>Manage Classes</h2>
+
+<input type="text" id="pickInput" placeholder="Enter class pick">
+<button class="btn btn-add" onclick="createClass()">Add Class</button>
+
+<table>
     <thead>
         <tr>
             <th>ID</th>
-            <th>Period</th>
             <th>Pick</th>
             <th>User</th>
             <th>Update</th>
@@ -19,24 +53,12 @@ show_reading_time: false
         </tr>
     </thead>
     <tbody id="classBody"></tbody>
-    <tfoot>
-        <tr>
-            <td colspan="6">
-                <button onclick="createClass()">Add Class</button>
-            </td>
-        </tr>
-    </tfoot>
 </table>
 
 <script>
-    var pythonURI;
-    if (location.hostname === "localhost") {
-        pythonURI = "http://localhost:8204";
-    } else if (location.hostname === "127.0.0.1") {
-        pythonURI = "http://127.0.0.1:8204";
-    } else {
-        pythonURI = "https://neptune.stu.nighthawkcodingsociety.com";
-    }
+    var pythonURI = location.hostname.includes("localhost") || location.hostname === "127.0.0.1" 
+        ? "http://127.0.0.1:8204" 
+        : "https://neptune.stu.nighthawkcodingsociety.com";
 
     const fetchOptions = {
         method: "GET", 
@@ -50,129 +72,71 @@ show_reading_time: false
     };
 
     window.createClass = async function () {
-    const pick = prompt("Enter class pick:");
-    if (!pick) return;
+        const pick = document.getElementById("pickInput").value.trim();
+        if (!pick) return;
 
-    // Assume user is authenticated and their username is available globally or through session
-    const user = "currentUserName"; // Replace this with the actual method to fetch the user's name
+        const user = "currentUserName"; // Replace with actual user fetching method
+        const requestBody = { pick: pick, user: user };
 
-    const requestBody = {
-        pick: pick,
-        user: user, // Automatically send the username with the request
+        try {
+            const res = await fetch(`${pythonURI}/api/class/add`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requestBody),
+                credentials: "include",
+            });
+
+            if (!res.ok) throw new Error("Failed to create class");
+            const newClass = await res.json();
+            displayClass(newClass);
+            document.getElementById("pickInput").value = "";
+        } catch (err) {
+            console.error("Error:", err);
+        }
     };
 
-    console.log("Sending request with body:", requestBody);  // Debugging line
+    window.updateMenu = async function (id) {
+        const row = document.querySelector(`[data-id="${id}"]`);
+        const pickCell = row.querySelector(".pick");
+        const newPick = prompt("Enter new pick:", pickCell.textContent);
+        if (!newPick) return;
 
-    try {
-        const res = await fetch(`${pythonURI}/api/class/add`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-            credentials: "include",  // Include credentials like cookies (for authenticated user)
+        await fetch(`${pythonURI}/api/class/add`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: id, pick: newPick }),
         });
 
-        if (!res.ok) {
-            const errorData = await res.json();
-            console.error("Error response from server:", errorData);  // Print server error details
-            throw new Error("Failed to create class");
-        }
+        pickCell.textContent = newPick;
+    };
 
-        const newClass = await res.json();
-        displayClass(newClass);
-    } catch (err) {
-        console.error("Error:", err);
-    }
-};
-
-
-
-
-    // Update the pick of a class
-    window.updateMenu = async function (id) {
-    let newPick = prompt("Enter new pick:");
-    if (!newPick) return;
-
-    await fetch(`${pythonURI}/api/class/add`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: id, pick: newPick }), // Fix: Pass ID correctly
-    });
-
-    // Update the pick in the table directly
-    const row = document.querySelector(`[data-id="${id}"]`);
-    if (row) {
-        row.querySelector('.pick').textContent = newPick;
-    }
-};
-
-
-    // Delete a class from the table
     window.deleteClass = async function (id) {
-    await fetch(`${pythonURI}/api/class/add`, {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: id }), // Fix: Pass ID correctly
-    });
+        await fetch(`${pythonURI}/api/class/add`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: id }),
+        });
 
-    // Remove the row from the table
-    const row = document.querySelector(`[data-id="${id}"]`);
-    if (row) {
-        row.remove();
-    }
-};
+        document.querySelector(`[data-id="${id}"]`).remove();
+    };
 
-    // Display all classes on the page
-    window.displayClass = function(classData) {  
-    const tableBody = document.getElementById("classBody");
-    const row = document.createElement("tr");
-    row.setAttribute("data-id", classData.id);
+    window.displayClass = function (classData) {
+        const tableBody = document.getElementById("classBody");
+        const row = document.createElement("tr");
+        row.setAttribute("data-id", classData.id);
 
-    const idCell = document.createElement("td");
-    idCell.textContent = classData.id;
+        row.innerHTML = `
+            <td>${classData.id}</td>
+            <td class="pick">${classData.pick}</td>
+            <td>${classData.user}</td>
+            <td><button class="btn btn-update" onclick="updateMenu(${classData.id})">Update</button></td>
+            <td><button class="btn btn-delete" onclick="deleteClass(${classData.id})">Delete</button></td>
+        `;
 
-    const periodCell = document.createElement("td");
-    periodCell.textContent = classData.period;
+        tableBody.appendChild(row);
+    };
 
-    const pickCell = document.createElement("td");
-    pickCell.classList.add('pick');
-    pickCell.textContent = classData.pick;
-
-    const userCell = document.createElement("td");
-    userCell.textContent = classData.user;
-
-    const updateCell = document.createElement("td");
-    const updateButton = document.createElement("button");
-    updateButton.textContent = "Update";
-    updateButton.onclick = () => updateMenu(classData.id);
-    updateCell.appendChild(updateButton);
-
-    const deleteCell = document.createElement("td");
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
-    deleteButton.onclick = () => deleteClass(classData.id);
-    deleteCell.appendChild(deleteButton);
-
-    row.appendChild(idCell);
-    row.appendChild(periodCell);
-    row.appendChild(pickCell);
-    row.appendChild(userCell);
-    row.appendChild(updateCell);
-    row.appendChild(deleteCell);
-
-    tableBody.appendChild(row);
-}
-
-
-    // Fetch and display existing classes from the backend
     fetch(`${pythonURI}/api/class/add`, fetchOptions)
         .then((res) => res.json())
-        .then((classes) => {
-            classes.forEach(displayClass);
-        });
+        .then((classes) => classes.forEach(displayClass));
 </script>
