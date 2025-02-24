@@ -86,6 +86,15 @@ show_reading_time: false
   color: white;
 }
 
+.add-class-btn {
+  background: linear-gradient(135deg, #3a3a3a, #0f0f0f);
+  font-size: 1.2rem;
+}
+
+.add-class-btn:hover {
+  background: linear-gradient(135deg, #5a5a5a, #292929);
+}
+
 </style>
 
 <!-- Header with Logo and Title -->
@@ -94,6 +103,7 @@ show_reading_time: false
 </div>
 
 <!-- Layout container -->
+<!-- Layout container -->
 <div class="container">
   <div class="sidebar">
     <button class="dropdown" data-period="1">Period 1</button>
@@ -101,11 +111,17 @@ show_reading_time: false
     <button class="dropdown" data-period="3">Period 3</button>
     <button class="dropdown" data-period="4">Period 4</button>
     <button class="dropdown" data-period="5">Period 5</button>
+    
+    <!-- New "Add Class" Button -->
+    <button class="dropdown add-class-btn" onclick="window.location.href='https://dnhs-neptune.github.io/neptune_frontend/classcrud/'">
+      Missing a class? Click here to add it!
+    </button>
   </div>
   <div class="content" id="class-list">
     <p style="color: white; text-align: center;">Select a period to see available classes.</p>
   </div>
 </div>
+
 
 <script>
   var pythonURI;
