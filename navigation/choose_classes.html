@@ -120,35 +120,36 @@ show_reading_time: false
   };
 
   function getClasses() {
-    fetch(`${pythonURI}/api/class/add`, fetchOptions)
-      .then((res) => res.json())
-      .then((classes) => {
-        let periodButtons = document.querySelectorAll(".dropdown");
-        let classListContainer = document.getElementById("class-list");
+  fetch(`${pythonURI}/api/class/add`, fetchOptions)
+    .then((res) => res.json())
+    .then((classes) => {
+      let periodButtons = document.querySelectorAll(".dropdown");
+      let classListContainer = document.getElementById("class-list");
 
-        periodButtons.forEach((button) => {
-          button.addEventListener("click", function () {
-            let period = button.dataset.period;
-            classListContainer.innerHTML = `<h2 style='color:white; text-align:center;'>Classes for Period ${period}</h2>`;
-            let dropdownMenu = document.createElement("div");
-            dropdownMenu.classList.add("dropdown-menu", "show");
+      periodButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+          let period = button.dataset.period;
+          classListContainer.innerHTML = `
+            <h2 style="color:white; text-align:center;">Classes for Period ${period}</h2>
+            <div class="dropdown-menu show"></div>
+          `;
 
-            classes.forEach((classObj) => {
-              let card = document.createElement("div");
-              card.classList.add("class-card");
-              card.dataset.class = classObj.pick;
-              card.textContent = `${classObj.pick} (Added by ${classObj.user})`;
-              card.addEventListener("click", function () {
-                updateBackend(period, classObj.pick);
-              });
-              dropdownMenu.appendChild(card);
+          let dropdownMenu = classListContainer.querySelector(".dropdown-menu");
+
+          classes.forEach((classObj) => {
+            let card = document.createElement("div");
+            card.classList.add("class-card");
+            card.dataset.class = classObj.pick;
+            card.textContent = `${classObj.pick} (Added by ${classObj.user})`;
+            card.addEventListener("click", function () {
+              updateBackend(period, classObj.pick);
             });
-
-            classListContainer.appendChild(dropdownMenu);
+            dropdownMenu.appendChild(card);
           });
         });
       });
-  }
+    });
+}
 
   function updateBackend(period, _class) {
     let channelId;
