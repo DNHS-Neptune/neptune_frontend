@@ -16,8 +16,10 @@ show_reading_time: false
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     min-width: 400px;
     max-width: 600px; /* Adjust as needed */
-    overflow: hidden;
+    overflow: visible; /* Allows dropdown to be seen */
+    position: relative; /* Ensures dropdown is placed relative to this */
   }
+
 
   .sidebar {
     display: flex;
@@ -61,22 +63,26 @@ show_reading_time: false
 
   .dropdown-menu {
     display: none;
-    position: absolute; /* Makes sure it's positioned relative to .content */
+    position: absolute;
     top: 100%; /* Positions it below the dropdown button */
     left: 0;
-    width: 100%; /* Makes sure it doesn't overflow */
+    width: 100%;
     background: #333;
     border: 1px solid #555;
     border-radius: 10px;
     padding: 10px;
     max-height: 300px;
     overflow-y: auto;
-    z-index: 10; /* Ensures it appears above other content */
+    z-index: 1000; /* Ensures dropdown appears above all content */
   }
 
   .dropdown-menu.show {
     display: block;
   }
+
+  .dropdown-container {
+  position: relative; /* Ensures dropdown-menu is positioned properly */
+}
 
   .class-card {
     background: #444;
@@ -116,15 +122,31 @@ show_reading_time: false
 
 <!-- Layout container -->
 <!-- Layout container -->
+<!-- Layout container -->
 <div class="container">
   <div class="sidebar">
-    <button class="dropdown" data-period="1">Period 1</button>
-    <button class="dropdown" data-period="2">Period 2</button>
-    <button class="dropdown" data-period="3">Period 3</button>
-    <button class="dropdown" data-period="4">Period 4</button>
-    <button class="dropdown" data-period="5">Period 5</button>
+    <div class="dropdown-container">
+      <button class="dropdown" data-period="1">Period 1</button>
+      <div class="dropdown-menu"></div>
+    </div>
+    <div class="dropdown-container">
+      <button class="dropdown" data-period="2">Period 2</button>
+      <div class="dropdown-menu"></div>
+    </div>
+    <div class="dropdown-container">
+      <button class="dropdown" data-period="3">Period 3</button>
+      <div class="dropdown-menu"></div>
+    </div>
+    <div class="dropdown-container">
+      <button class="dropdown" data-period="4">Period 4</button>
+      <div class="dropdown-menu"></div>
+    </div>
+    <div class="dropdown-container">
+      <button class="dropdown" data-period="5">Period 5</button>
+      <div class="dropdown-menu"></div>
+    </div>
 
-    <!-- New "Add Class" Button -->
+    <!-- "Add Class" Button -->
     <button
       class="dropdown add-class-btn"
       onclick="window.location.href='https://dnhs-neptune.github.io/neptune_frontend/classcrud/'"
@@ -132,12 +154,15 @@ show_reading_time: false
       Missing a class? Click here to add it!
     </button>
   </div>
+
+  <!-- Content Box (Where selected classes will appear) -->
   <div class="content" id="class-list">
     <p style="color: white; text-align: center">
       Select a period to see available classes.
     </p>
   </div>
 </div>
+
 
 <script>
   var pythonURI;
