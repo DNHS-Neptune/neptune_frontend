@@ -79,6 +79,13 @@ show_reading_time: false
   .class-card:hover {
     background: #666;
   }
+
+  .class-card.selected {
+  background: #008080; /* Teal */
+  font-weight: bold;
+  color: white;
+}
+
 </style>
 
 <!-- Header with Logo and Title -->
@@ -125,6 +132,7 @@ show_reading_time: false
     .then((classes) => {
       let periodButtons = document.querySelectorAll(".dropdown");
       let classListContainer = document.getElementById("class-list");
+      let selectedClasses = {}; // Store selected classes per period
 
       periodButtons.forEach((button) => {
         button.addEventListener("click", function () {
@@ -141,15 +149,33 @@ show_reading_time: false
             card.classList.add("class-card");
             card.dataset.class = classObj.pick;
             card.textContent = `${classObj.pick} (Added by ${classObj.user})`;
+
+            // Apply selected style if this class was previously chosen
+            if (selectedClasses[period] === classObj.pick) {
+              card.classList.add("selected");
+            }
+
             card.addEventListener("click", function () {
+              // Remove highlight from any previously selected class
+              let allCards = dropdownMenu.querySelectorAll(".class-card");
+              allCards.forEach((c) => c.classList.remove("selected"));
+
+              // Highlight the selected class
+              card.classList.add("selected");
+
+              // Store selection
+              selectedClasses[period] = classObj.pick;
+
               updateBackend(period, classObj.pick);
             });
+
             dropdownMenu.appendChild(card);
           });
         });
       });
     });
 }
+
 
   function updateBackend(period, _class) {
     let channelId;
