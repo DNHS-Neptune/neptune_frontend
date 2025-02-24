@@ -8,12 +8,15 @@ show_reading_time: false
 ---
 
 <style>
-  .container {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 50px;
-    margin-top: 30px;
+  .content {
+    position: relative; /* Ensures dropdown stays inside */
+    flex-grow: 1;
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    min-width: 400px;
+    overflow: hidden; /* Optional: prevents breakout */
   }
 
   .sidebar {
@@ -52,16 +55,20 @@ show_reading_time: false
 
   .dropdown-menu {
     display: none;
+    position: absolute; /* Makes sure it's positioned relative to .content */
+    top: 100%; /* Positions it below the dropdown button */
+    left: 0;
+    width: 100%; /* Makes sure it doesn't overflow */
     background: #333;
     border: 1px solid #555;
     border-radius: 10px;
     padding: 10px;
-    width: 100%;
     max-height: 300px;
     overflow-y: auto;
+    z-index: 10; /* Ensures it appears above other content */
   }
 
-  .dropdown-menu.show {
+  .dropdown-menu.💅🏿show {
     display: block;
   }
 
@@ -81,24 +88,23 @@ show_reading_time: false
   }
 
   .class-card.selected {
-  background: #008080; /* Teal */
-  font-weight: bold;
-  color: white;
-}
+    background: #008080; /* Teal */
+    font-weight: bold;
+    color: white;
+  }
 
-.add-class-btn {
-  background: linear-gradient(135deg, #3a3a3a, #0f0f0f);
-  font-size: 1.2rem;
-}
+  .add-class-btn {
+    background: linear-gradient(135deg, #3a3a3a, #0f0f0f);
+    font-size: 1.2rem;
+  }
 
-.add-class-btn:hover {
-  background: linear-gradient(135deg, #5a5a5a, #292929);
-}
-
+  .add-class-btn:hover {
+    background: linear-gradient(135deg, #5a5a5a, #292929);
+  }
 </style>
 
 <!-- Header with Logo and Title -->
-<div class="header-container" style="text-align: center;">
+<div class="header-container" style="text-align: center">
   <h1>Choose Your Classes</h1>
 </div>
 
@@ -111,17 +117,21 @@ show_reading_time: false
     <button class="dropdown" data-period="3">Period 3</button>
     <button class="dropdown" data-period="4">Period 4</button>
     <button class="dropdown" data-period="5">Period 5</button>
-    
+
     <!-- New "Add Class" Button -->
-    <button class="dropdown add-class-btn" onclick="window.location.href='https://dnhs-neptune.github.io/neptune_frontend/classcrud/'">
+    <button
+      class="dropdown add-class-btn"
+      onclick="window.location.href='https://dnhs-neptune.github.io/neptune_frontend/classcrud/'"
+    >
       Missing a class? Click here to add it!
     </button>
   </div>
   <div class="content" id="class-list">
-    <p style="color: white; text-align: center;">Select a period to see available classes.</p>
+    <p style="color: white; text-align: center">
+      Select a period to see available classes.
+    </p>
   </div>
 </div>
-
 
 <script>
   var pythonURI;
@@ -143,55 +153,55 @@ show_reading_time: false
   };
 
   function getClasses() {
-  fetch(`${pythonURI}/api/class/add`, fetchOptions)
-    .then((res) => res.json())
-    .then((classes) => {
-      let periodButtons = document.querySelectorAll(".dropdown");
-      let classListContainer = document.getElementById("class-list");
-      let selectedClasses = {}; // Store selected classes per period
+    fetch(`${pythonURI}/api/class/add`, fetchOptions)
+      .then((res) => res.json())
+      .then((classes) => {
+        let periodButtons = document.querySelectorAll(".dropdown");
+        let classListContainer = document.getElementById("class-list");
+        let selectedClasses = {}; // Store selected classes per period
 
-      periodButtons.forEach((button) => {
-        button.addEventListener("click", function () {
-          let period = button.dataset.period;
-          classListContainer.innerHTML = `
+        periodButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            let period = button.dataset.period;
+            classListContainer.innerHTML = `
             <h2 style="color:white; text-align:center;">Classes for Period ${period}</h2>
             <div class="dropdown-menu show"></div>
           `;
 
-          let dropdownMenu = classListContainer.querySelector(".dropdown-menu");
+            let dropdownMenu =
+              classListContainer.querySelector(".dropdown-menu");
 
-          classes.forEach((classObj) => {
-            let card = document.createElement("div");
-            card.classList.add("class-card");
-            card.dataset.class = classObj.pick;
-            card.textContent = `${classObj.pick} (Added by ${classObj.user})`;
+            classes.forEach((classObj) => {
+              let card = document.createElement("div");
+              card.classList.add("class-card");
+              card.dataset.class = classObj.pick;
+              card.textContent = `${classObj.pick} (Added by ${classObj.user})`;
 
-            // Apply selected style if this class was previously chosen
-            if (selectedClasses[period] === classObj.pick) {
-              card.classList.add("selected");
-            }
+              // Apply selected style if this class was previously chosen
+              if (selectedClasses[period] === classObj.pick) {
+                card.classList.add("selected");
+              }
 
-            card.addEventListener("click", function () {
-              // Remove highlight from any previously selected class
-              let allCards = dropdownMenu.querySelectorAll(".class-card");
-              allCards.forEach((c) => c.classList.remove("selected"));
+              card.addEventListener("click", function () {
+                // Remove highlight from any previously selected class
+                let allCards = dropdownMenu.querySelectorAll(".class-card");
+                allCards.forEach((c) => c.classList.remove("selected"));
 
-              // Highlight the selected class
-              card.classList.add("selected");
+                // Highlight the selected class
+                card.classList.add("selected");
 
-              // Store selection
-              selectedClasses[period] = classObj.pick;
+                // Store selection
+                selectedClasses[period] = classObj.pick;
 
-              updateBackend(period, classObj.pick);
+                updateBackend(period, classObj.pick);
+              });
+
+              dropdownMenu.appendChild(card);
             });
-
-            dropdownMenu.appendChild(card);
           });
         });
       });
-    });
-}
-
+  }
 
   function updateBackend(period, _class) {
     let channelId;
@@ -210,7 +220,9 @@ show_reading_time: false
       })
       .then((response) => response.json())
       .then((data) => {
-        let periodList = data.filter((post) => post.channel_name === "classlist");
+        let periodList = data.filter(
+          (post) => post.channel_name === "classlist"
+        );
         let existingPost = periodList.find((post) => post.title == period);
         if (existingPost) {
           return fetch(`${pythonURI}/api/post`, {
