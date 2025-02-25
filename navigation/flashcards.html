@@ -92,9 +92,7 @@ show_reading_time: false
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
     deleteButton.onclick = () => {
-      if (confirm("Are you sure you want to delete this card?")) {
-        deleteCard(nolan.id);
-      }
+      deleteCard(nolan.id);
     };
 
     const buttonContainer = document.createElement("div");
