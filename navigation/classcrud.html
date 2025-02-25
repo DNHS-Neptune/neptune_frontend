@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Classes
+title: 
 permalink: /classcrud/
 menu: nav/home.html
 search_exclude: true
@@ -8,6 +8,33 @@ show_reading_time: false
 ---
 
 <style>
+
+    /* Header Styling */
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  margin-top: -80px; /* Moves the header higher */
+}
+
+.logo-container {
+  margin-right: 25px;
+}
+
+.logo-container img {
+  height: 110px;
+  width: auto;
+}
+
+h1 {
+  font-size: 3.5rem;
+  color: white;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
     table {
         width: 100%;
         border-collapse: collapse;
@@ -37,7 +64,12 @@ show_reading_time: false
     .btn-delete { background-color: #d9534f; }
 </style>
 
-<h2>Manage Classes</h2>
+<div class="header-container">
+    <div class="logo-container">
+      <img src="{{site.baseurl}}/navigation/images/neptune.png" alt="Logo" />
+    </div>
+    <h1>Manage Classes</h1>
+  </div>
 
 <input type="text" id="pickInput" placeholder="Enter class pick">
 <button class="btn btn-add" onclick="createClass()">Add Class</button>
@@ -129,4 +161,18 @@ show_reading_time: false
     fetch(`${pythonURI}/api/class/add`, fetchOptions)
         .then((res) => res.json())
         .then((classes) => classes.forEach(displayClass));
+
+        document.getElementById("pickInput").addEventListener("input", function () {
+    const searchValue = this.value.toLowerCase();
+    const rows = document.querySelectorAll("#classBody tr");
+
+    rows.forEach(row => {
+        const pickCell = row.querySelector(".pick");
+        if (pickCell.textContent.toLowerCase().includes(searchValue)) {
+            row.style.backgroundColor = "#ffff99"; // Highlight in yellow
+        } else {
+            row.style.backgroundColor = ""; // Reset if no match
+        }
+    });
+});
 </script>
