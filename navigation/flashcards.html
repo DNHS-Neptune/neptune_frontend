@@ -82,11 +82,36 @@ show_reading_time: false
     const updateButton = document.createElement("button");
     updateButton.textContent = "Update";
     updateButton.onclick = () => {
-      const newFront = prompt("Enter new front text:", nolan.front);
-      const newBack = prompt("Enter new back text:", nolan.back);
-      if (newFront && newBack) {
-        updateCard(nolan.id, newFront, newBack);
-      }
+      const popup = document.createElement("div");
+      popup.classList.add("popup");
+
+      const frontInput = document.createElement("input");
+      frontInput.type = "text";
+      frontInput.value = nolan.front;
+
+      const backInput = document.createElement("input");
+      backInput.type = "text";
+      backInput.value = nolan.back;
+
+      const saveButton = document.createElement("button");
+      saveButton.textContent = "Save";
+      saveButton.onclick = () => {
+        updateCard(nolan.id, frontInput.value, backInput.value);
+        document.body.removeChild(popup);
+      };
+
+      const cancelButton = document.createElement("button");
+      cancelButton.textContent = "Cancel";
+      cancelButton.onclick = () => {
+        document.body.removeChild(popup);
+      };
+
+      popup.appendChild(frontInput);
+      popup.appendChild(backInput);
+      popup.appendChild(saveButton);
+      popup.appendChild(cancelButton);
+
+      document.body.appendChild(popup);
     };
 
     const deleteButton = document.createElement("button");
@@ -188,5 +213,21 @@ show_reading_time: false
     justify-content: center;
     align-items: center;
     margin: 10px;
+  }
+
+  .popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid black;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 </style>
