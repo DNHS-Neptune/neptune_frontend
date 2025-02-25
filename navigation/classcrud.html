@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 
+title: Classes
 permalink: /classcrud/
 menu: nav/home.html
 search_exclude: true
@@ -8,33 +8,6 @@ show_reading_time: false
 ---
 
 <style>
-
-    /* Header Styling */
-.header-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 30px;
-  margin-top: -80px; /* Moves the header higher */
-}
-
-.logo-container {
-  margin-right: 25px;
-}
-
-.logo-container img {
-  height: 110px;
-  width: auto;
-}
-
-h1 {
-  font-size: 3.5rem;
-  color: white;
-  margin: 0;
-  display: flex;
-  align-items: center;
-}
-
     table {
         width: 100%;
         border-collapse: collapse;
@@ -64,12 +37,7 @@ h1 {
     .btn-delete { background-color: #d9534f; }
 </style>
 
-<div class="header-container">
-    <div class="logo-container">
-      <img src="{{site.baseurl}}/navigation/images/neptune.png" alt="Logo" />
-    </div>
-    <h1>Manage Classes</h1>
-  </div>
+<h2>Manage Classes</h2>
 
 <input type="text" id="pickInput" placeholder="Enter class pick">
 <button class="btn btn-add" onclick="createClass()">Add Class</button>
