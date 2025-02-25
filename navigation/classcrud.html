@@ -162,19 +162,3 @@ h1 {
         .then((res) => res.json())
         .then((classes) => classes.forEach(displayClass));
 </script>
-
-<script>
-    document.getElementById("pickInput").addEventListener("input", function () {
-    const searchValue = this.value.toLowerCase();
-    const rows = document.querySelectorAll("#classBody tr");
-
-    rows.forEach(row => {
-        const pickCell = row.querySelector(".pick");
-        if (pickCell.textContent.toLowerCase().includes(searchValue)) {
-            row.style.backgroundColor = "#ffff99"; // Highlight in yellow
-        } else {
-            row.style.backgroundColor = ""; // Reset if no match
-        }
-    });
-});
-</script>
