@@ -197,7 +197,7 @@ show_reading_time: false
 
             const data = await response.json();
             return data.theme_mode;
-            console.log("data:", data.theme_mode)
+            console.log("users theme from user table data:", data.theme_mode)
         } catch (error) {
             console.error('Error fetching theme:', error.message);
             return null;
@@ -226,7 +226,7 @@ show_reading_time: false
             }
 
             const data = await response.json();
-            console.log("Theme read:", data);
+            console.log("Theme read/getcss from the themes table:", data);
 
             // If the CSS is found, assign it to the variable
             cssFilePath = data.css || "No CSS found";  // This will store the CSS file path or a fallback message
