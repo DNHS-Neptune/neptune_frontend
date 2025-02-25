@@ -1,0 +1,129 @@
+---
+layout: post
+title: Nolans
+permalink: /flashcards/
+menu: nav/home.html
+search_exclude: true
+show_reading_time: false
+---
+
+<div class="control">
+  <input type="text" id="front" placeholder="Front" />
+  <input type="text" id="back" placeholder="Back" />
+  <button onclick="createNolan(front.value, back.value)">Create</button>
+</div>
+
+<div class="cards"></div>
+
+<script>
+  var pythonURI;
+  if (location.hostname === "localhost") {
+    pythonURI = "http://localhost:8204";
+  } else if (location.hostname === "127.0.0.1") {
+    pythonURI = "http://127.0.0.1:8204";
+  } else {
+    pythonURI = "https://neptune.stu.nighthawkcodingsociety.com";
+  }
+  const fetchOptions = {
+    method: "GET", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, *cors, same-origin
+    cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "include", // include, same-origin, omit
+    headers: {
+      "Content-Type": "application/json",
+      "X-Origin": "client", // New custom header to identify source
+    },
+  };
+
+  /*
+  {
+    "id": 1,
+    "front": "What is the capital of France?",
+    "back": "Paris",
+  }
+  */
+
+  function createNolan(front, back) {
+    fetch(`${pythonURI}/api/nolandb`, {
+      ...fetchOptions,
+      method: "POST",
+      body: JSON.stringify({ front, back }),
+    })
+      .then((res) => res.json())
+      .then((newNolan) => {
+        const cards = document.querySelector(".cards");
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.innerHTML = `
+          <h3>${newNolan.front}</h3>
+        `;
+
+        card.addEventListener("click", () => {
+          card.innerHTML = `
+            <h3>${newNolan.back}</h3>
+            <p>${newNolan.front}</p>
+          `;
+        });
+
+        cards.appendChild(card);
+      });
+  }
+
+  fetch(`${pythonURI}/api/nolandb`, fetchOptions)
+    .then((res) => res.json())
+    .then(async (nolans) => {
+      const cards = document.querySelector(".cards");
+      nolans.forEach((nolan) => {
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.innerHTML = `
+          <h3>${nolan.front}</h3>
+        `;
+
+        card.addEventListener("click", () => {
+          card.innerHTML = `
+            <h3>${nolan.back}</h3>
+            <p>${nolan.front}</p>
+          `;
+        });
+
+        cards.appendChild(card);
+      });
+    });
+</script>
+
+<style>
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .card {
+    width: 300px;
+    height: 200px;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .card h3 {
+    margin: 0;
+  }
+
+  .card p {
+    margin: 0;
+  }
+
+  .control {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+  }
+</style>
