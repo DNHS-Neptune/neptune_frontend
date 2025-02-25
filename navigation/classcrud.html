@@ -161,8 +161,10 @@ h1 {
     fetch(`${pythonURI}/api/class/add`, fetchOptions)
         .then((res) => res.json())
         .then((classes) => classes.forEach(displayClass));
+</script>
 
-        document.getElementById("pickInput").addEventListener("input", function () {
+<script>
+    document.getElementById("pickInput").addEventListener("input", function () {
     const searchValue = this.value.toLowerCase();
     const rows = document.querySelectorAll("#classBody tr");
 
