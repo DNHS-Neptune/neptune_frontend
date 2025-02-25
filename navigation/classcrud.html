@@ -71,8 +71,15 @@ h1 {
     <h1>Manage Classes</h1>
   </div>
 
-<input type="text" id="pickInput" placeholder="Enter class pick">
-<button class="btn btn-add" onclick="createClass()">Add Class</button>
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px;">
+    <div>
+        <input type="text" id="pickInput" placeholder="Enter class pick">
+        <button class="btn btn-add" onclick="createClass()">Add Class</button>
+    </div>
+    <div>
+        <input type="text" id="searchInput" placeholder="Search class..." onkeyup="searchClass()">
+    </div>
+</div>
 
 <table>
     <thead>
@@ -91,7 +98,6 @@ h1 {
     var pythonURI = location.hostname.includes("localhost") || location.hostname === "127.0.0.1" 
         ? "http://127.0.0.1:8204" 
         : "https://neptune.stu.nighthawkcodingsociety.com";
-
 
     window.createClass = async function () {
         const pick = document.getElementById("pickInput").value.trim();
@@ -170,6 +176,17 @@ h1 {
         tableBody.appendChild(row);
     };
 
+    // Search function to filter classes
+    window.searchClass = function () {
+        let input = document.getElementById("searchInput").value.toLowerCase();
+        let rows = document.querySelectorAll("#classBody tr");
+
+        rows.forEach(row => {
+            let pickText = row.querySelector(".pick").textContent.toLowerCase();
+            row.style.display = pickText.includes(input) ? "" : "none";
+        });
+    };
+
     // Define fetchOptions before using it
     const fetchOptions = {
         method: "GET",
@@ -182,4 +199,3 @@ h1 {
         .then((classes) => classes.forEach(displayClass))
         .catch((err) => console.error("Error fetching classes:", err));
 </script>
-
