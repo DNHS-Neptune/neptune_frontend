@@ -35,7 +35,7 @@ Here is an image of the chatroom in depth, since it uses WebSocket.
 
 `Assistant Scrum: Shawn`
 
-`UX: Akshaj`
+`UX: Akshaj & Shawn`
 
 `Deployment Admin: Kanhay`
 
