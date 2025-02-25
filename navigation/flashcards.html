@@ -44,7 +44,7 @@ show_reading_time: false
   */
 
   function createNolan(front, back) {
-    fetch(`${pythonURI}/api/nolandb`, {
+    fetch(`${pythonURI}/api/flashcards`, {
       ...fetchOptions,
       method: "POST",
       body: JSON.stringify({ front, back }),
@@ -69,7 +69,7 @@ show_reading_time: false
       });
   }
 
-  fetch(`${pythonURI}/api/nolandb`, fetchOptions)
+  fetch(`${pythonURI}/api/flashcards`, fetchOptions)
     .then((res) => res.json())
     .then(async (nolans) => {
       const cards = document.querySelector(".cards");
