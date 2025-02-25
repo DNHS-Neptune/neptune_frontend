@@ -43,6 +43,86 @@ show_reading_time: false
   }
   */
 
+  function updateCard(id, front, back) {
+    fetch(`${pythonURI}/api/flashcards`, {
+      ...fetchOptions,
+      method: "PUT",
+      body: JSON.stringify({ id, front, back }),
+    })
+      .then((res) => res.json())
+      .then((updatedNolan) => {
+        console.log("uo", updatedNolan);
+        document.location.reload();
+      });
+  }
+
+  function deleteCard(id) {
+    fetch(`${pythonURI}/api/flashcards`, {
+      ...fetchOptions,
+      method: "DELETE",
+      body: JSON.stringify({ id }),
+    })
+      .then((res) => res.json())
+      .then((deletedNolan) => {
+        console.log("do", deletedNolan);
+        document.location.reload();
+      });
+  }
+
+  function addCard(nolan) {
+    const cards = document.querySelector(".cards");
+
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.innerHTML = `
+          <h3>${nolan.front}</h3>
+        `;
+
+    let isFlipped = false;
+    const updateButton = document.createElement("button");
+    updateButton.textContent = "Update";
+    updateButton.onclick = () => {
+      const newFront = prompt("Enter new front text:", nolan.front);
+      const newBack = prompt("Enter new back text:", nolan.back);
+      if (newFront && newBack) {
+        updateCard(nolan.id, newFront, newBack);
+      }
+    };
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.onclick = () => {
+      if (confirm("Are you sure you want to delete this card?")) {
+        deleteCard(nolan.id);
+      }
+    };
+
+    const buttonContainer = document.createElement("div");
+    buttonContainer.style.display = "flex";
+    buttonContainer.style.justifyContent = "space-between";
+    buttonContainer.style.width = "100%";
+    buttonContainer.appendChild(updateButton);
+    buttonContainer.appendChild(deleteButton);
+
+    card.addEventListener("click", () => {
+      if (isFlipped) {
+        card.innerHTML = `
+              <h3>${nolan.front}</h3>
+            `;
+      } else {
+        card.innerHTML = `
+              <h3>${nolan.back}</h3>
+              <p>${nolan.front}</p>
+            `;
+      }
+      card.appendChild(buttonContainer);
+      isFlipped = !isFlipped;
+    });
+
+    card.appendChild(buttonContainer);
+    cards.appendChild(card);
+  }
+
   function createNolan(front, back) {
     fetch(`${pythonURI}/api/flashcards`, {
       ...fetchOptions,
@@ -50,45 +130,13 @@ show_reading_time: false
       body: JSON.stringify({ front, back }),
     })
       .then((res) => res.json())
-      .then((newNolan) => {
-        const cards = document.querySelector(".cards");
-        const card = document.createElement("div");
-        card.classList.add("card");
-        card.innerHTML = `
-          <h3>${newNolan.front}</h3>
-        `;
-
-        card.addEventListener("click", () => {
-          card.innerHTML = `
-            <h3>${newNolan.back}</h3>
-            <p>${newNolan.front}</p>
-          `;
-        });
-
-        cards.appendChild(card);
-      });
+      .then(addCard);
   }
 
   fetch(`${pythonURI}/api/flashcards`, fetchOptions)
     .then((res) => res.json())
     .then(async (nolans) => {
-      const cards = document.querySelector(".cards");
-      nolans.forEach((nolan) => {
-        const card = document.createElement("div");
-        card.classList.add("card");
-        card.innerHTML = `
-          <h3>${nolan.front}</h3>
-        `;
-
-        card.addEventListener("click", () => {
-          card.innerHTML = `
-            <h3>${nolan.back}</h3>
-            <p>${nolan.front}</p>
-          `;
-        });
-
-        cards.appendChild(card);
-      });
+      nolans.forEach(addCard);
     });
 </script>
 
@@ -110,6 +158,23 @@ show_reading_time: false
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
+  }
+
+  .card div {
+    position: absolute;
+    bottom: 10px;
+    width: calc(100% - 20px);
+  }
+
+  .card button {
+    background-color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-left: 5px;
   }
 
   .card h3 {
