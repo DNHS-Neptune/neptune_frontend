@@ -1,11 +1,18 @@
 ---
 layout: post
-title: Nolans
+title: 
 permalink: /flashcards/
 menu: nav/home.html
 search_exclude: true
 show_reading_time: false
 ---
+
+<div class="header-container">
+  <div class="logo-container">
+    <img src="{{site.baseurl}}/navigation/images/neptune.png" alt="Logo" />
+  </div>
+  <h1>Flashcards</h1>
+</div>
 
 <div class="control">
   <input type="text" id="front" placeholder="Front" />
@@ -164,6 +171,31 @@ show_reading_time: false
 </script>
 
 <style>
+  /* Header Styling */
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+
+  .logo-container {
+    margin-right: 25px;
+  }
+
+  .logo-container img {
+    height: 110px;
+    width: auto;
+  }
+
+  h1 {
+    font-size: 3.5rem;
+    color: white;
+    margin: 0;
+    display: flex;
+    align-items: center;
+  }
+  
   .cards {
     display: flex;
     flex-wrap: wrap;
