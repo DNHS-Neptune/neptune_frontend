@@ -110,20 +110,24 @@ show_reading_time: false
 </div>
 
 <style>
+  body {
+    background-color: #2c2f33;
+    font-family: Arial, sans-serif;
+  }
+
   .chatroom {
-    width: 400px;
+    width: 450px;
     margin: 20px auto;
     padding: 15px;
-    border: 1px solid #ccc;
     border-radius: 8px;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #23272a;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    color: white;
   }
 
   .chatroom h2 {
     text-align: center;
-    font-family: Arial, sans-serif;
-    color: #333;
+    color: #ffffff;
   }
 
   #usernameInput,
@@ -131,75 +135,70 @@ show_reading_time: false
     width: calc(100% - 20px);
     padding: 10px;
     margin: 5px 0;
-    border: 1px solid #ddd;
+    border: none;
     border-radius: 4px;
     font-size: 14px;
+    background-color: #40444b;
+    color: white;
   }
 
   button {
     width: 100%;
     padding: 10px;
-    background-color: #4caf50;
+    background-color: #5865f2;
     color: white;
     border: none;
     border-radius: 4px;
     font-size: 16px;
     cursor: pointer;
+    transition: background 0.2s;
   }
 
   button:hover {
-    background-color: #45a049;
+    background-color: #4752c4;
   }
 
   #messages {
     margin-top: 15px;
     padding: 10px;
-    border: 1px solid #ddd;
     border-radius: 4px;
-    background-color: #fff;
-    max-height: 200px;
+    background-color: #2c2f33;
+    max-height: 300px;
     overflow-y: auto;
   }
 
   #messages li {
     list-style-type: none;
-    padding: 5px 0;
-    border-bottom: 1px solid #f1f1f1;
-    color: black;
+    padding: 8px;
+    border-bottom: 1px solid #40444b;
+    color: white;
+    display: flex;
+    justify-content: space-between;
   }
 
   #messages li:last-child {
     border-bottom: none;
   }
 
-  button {
-    margin-left: 10px;
-    padding: 5px 10px;
-    background-color: #f44336;
-    color: white;
+  .delete-btn, .update-btn {
+    background-color: #ff5c5c;
     border: none;
     border-radius: 4px;
+    padding: 5px 8px;
+    color: white;
     cursor: pointer;
-  }
-
-  button:hover {
-    background-color: #d32f2f;
-  }
-
-  button {
-    margin-left: 10px;
-    padding: 2px 6px;
-    /* Smaller padding */
     font-size: 12px;
-    /* Smaller font size */
-    background-color: #f44336;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
   }
 
-  button:hover {
-    background-color: #d32f2f;
+  .update-btn {
+    background-color: #ffaa00;
+  }
+
+  .delete-btn:hover {
+    background-color: #e04747;
+  }
+
+  .update-btn:hover {
+    background-color: #e69900;
   }
 </style>
