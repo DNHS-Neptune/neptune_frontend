@@ -1,6 +1,6 @@
 ---
 layout: post
-title: The Chat
+title:  
 search_exclude: true
 menu: nav/home.html
 permalink: /posts/
@@ -62,51 +62,64 @@ show_reading_time: false
   })
 
   function displayMessage(id, message) {
-    console.log(id)
-    const messageList = document.getElementById("messages");
-    const newMessage = document.createElement("li");
-    let isServer = message === "Server: Welcome to the chat!";
-    if (!isServer) newMessage.id = id;
-    let toDel = false;
+  console.log(id);
+  const messageList = document.getElementById("messages");
+  const newMessage = document.createElement("li");
+  let isServer = message === "Server: Welcome to the chat!";
+  if (!isServer) newMessage.id = id;
+  let toDel = false;
 
-    const messageText = document.createElement("span");
-    messageText.textContent = message;
+  const messageText = document.createElement("span");
+  messageText.textContent = message;
 
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
-    deleteButton.style.marginLeft = "10px";
-    deleteButton.onclick = () => {
-      socket.emit("chat_delete", { id })
-      toDel = true;
-      document.getElementById(id).remove();
-    };
+  // Create a container for buttons to ensure consistent positioning
+  const actionsContainer = document.createElement("div");
+  actionsContainer.classList.add("message-actions");
 
-    const updateButton = document.createElement("button");
-    updateButton.textContent = "Update";
-    updateButton.style.marginLeft = "10px";
-    updateButton.onclick = () => {
-      let __msg = prompt("New Message:");
-      if (!__msg) return;
+  const deleteButton = document.createElement("button");
+  deleteButton.textContent = "Delete";
+  deleteButton.classList.add("delete-btn");
+  deleteButton.onclick = () => {
+    socket.emit("chat_delete", { id });
+    toDel = true;
+    document.getElementById(id).remove();
+  };
 
-      socket.emit("chat_update", { id, content: __msg })
-      messageText.textContent = `${message.split(": ")[0]}: ${__msg}`;
-    };
+  const updateButton = document.createElement("button");
+  updateButton.textContent = "Edit";
+  updateButton.classList.add("update-btn");
+  updateButton.onclick = () => {
+    let __msg = prompt("New Message:");
+    if (!__msg) return;
 
-    newMessage.appendChild(messageText);
-    if (!isServer) {
-      newMessage.appendChild(deleteButton);
-      newMessage.appendChild(updateButton);
-    }
-    if (!toDel) messageList.appendChild(newMessage);
-  }
+    socket.emit("chat_update", { id, content: __msg });
+    messageText.textContent = `${message.split(": ")[0]}: ${__msg}`;
+  };
+
+  actionsContainer.appendChild(deleteButton);
+  actionsContainer.appendChild(updateButton);
+
+  newMessage.appendChild(messageText);
+  if (!isServer) newMessage.appendChild(actionsContainer);
+  if (!toDel) messageList.appendChild(newMessage);
+
+  // Scroll to the bottom after appending the new message
+  messageList.scrollTop = messageList.scrollHeight;
+}
+
 </script>
 
 <div class="chatroom">
-  <h2>Chat</h2>
-  <input id="usernameInput" placeholder="Name" />
-  <input id="messageInput" placeholder="Message" />
-  <button onclick="sendMessage()">Send</button>
+  <h2>
+    <img src="{{site.baseurl}}/navigation/images/neptune.png" alt="Logo" style="height: 105px; vertical-align: middle; margin-right: 15px;" />
+    <span style="font-size: 45px;">Chatroom</span>
+  </h2>
   <ul id="messages"></ul>
+  <div class="input-area">
+    <input id="usernameInput" placeholder="Name" />
+    <input id="messageInput" placeholder="Message" />
+    <button onclick="sendMessage()">Send</button>
+  </div>
 </div>
 
 <style>
@@ -116,89 +129,127 @@ show_reading_time: false
   }
 
   .chatroom {
-    width: 450px;
-    margin: 20px auto;
-    padding: 15px;
+    width: 80%;
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
     border-radius: 8px;
     background-color: #23272a;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     color: white;
+    display: flex;
+    flex-direction: column;
   }
 
   .chatroom h2 {
     text-align: center;
     color: #ffffff;
-  }
-
-  #usernameInput,
-  #messageInput {
-    width: calc(100% - 20px);
-    padding: 10px;
-    margin: 5px 0;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    background-color: #40444b;
-    color: white;
-  }
-
-  button {
-    width: 100%;
-    padding: 10px;
-    background-color: #5865f2;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-
-  button:hover {
-    background-color: #4752c4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
   }
 
   #messages {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 4px;
-    background-color: #2c2f33;
-    max-height: 300px;
-    overflow-y: auto;
-  }
+  flex-grow: 1;
+  margin-top: 15px;
+  padding: 15px;
+  border-radius: 6px;
+  background-color: #2c2f33;
+  max-height: 500px;
+  overflow-y: auto; /* Keep the scrollable box */
+}
+
+  #messages li {
+  list-style-type: none;
+  padding: 12px;
+  border-bottom: 1px solid #40444b;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+  line-height: 1.5;
+  min-height: 40px;
+  position: relative;
+}
 
   #messages li {
     list-style-type: none;
-    padding: 8px;
+    padding: 12px;
     border-bottom: 1px solid #40444b;
     color: white;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    line-height: 1.5;
+    min-height: 40px;
+    position: relative;
   }
 
   #messages li:last-child {
     border-bottom: none;
   }
 
-  .delete-btn, .update-btn {
-    background-color: #ff5c5c;
+  .input-area {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .input-area input {
+    flex: 1;
+    padding: 12px;
     border: none;
-    border-radius: 4px;
-    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #40444b;
     color: white;
+  }
+
+  .input-area button {
+    padding: 12px;
+    background-color: #5865f2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
     cursor: pointer;
-    font-size: 12px;
+    transition: background 0.2s;
   }
 
-  .update-btn {
-    background-color: #ffaa00;
+  .input-area button:hover {
+    background-color: #4752c4;
   }
 
-  .delete-btn:hover {
-    background-color: #e04747;
-  }
+  .message-actions {
+  display: flex;
+  gap: 10px; /* Ensure consistent space between buttons */
+  margin-left: auto; /* Push buttons to the right */
+}
 
-  .update-btn:hover {
-    background-color: #e69900;
-  }
+.delete-btn, .update-btn {
+  background-color: #ff5c5c;
+  border: none;
+  border-radius: 4px;
+  padding: 3px 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 10px;
+  min-width: 50px;
+  text-align: center;
+}
+
+.update-btn {
+  background-color: #ffaa00;
+}
+
+.delete-btn:hover {
+  background-color: #e04747;
+}
+
+.update-btn:hover {
+  background-color: #e69900;
+}
 </style>
