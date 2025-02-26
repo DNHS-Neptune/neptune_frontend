@@ -56,23 +56,47 @@ show_reading_time: false
     messEl.remove();
   })
 
-  socket.on("chat_up", (data) => {
-    const messEl = document.getElementById(data.id);
-    messEl.textContent = data.content;
-  })
+  socket.on("chat_update", (data) => {
+  const messEl = document.getElementById(data.id);
+  messEl.remove();
+});
 
-  function displayMessage(id, message) {
-  console.log(id);
+socket.on("chat_up", (data) => {
+  const messEl = document.getElementById(data.id);
+  messEl.textContent = data.content;
+});
+
+function sendMessage() {
+  const username = document.getElementById("usernameInput").value;
+  const message = document.getElementById("messageInput").value;
+
+  if (username && message) {
+    const messageId = Date.now(); // Generate a unique ID for the message
+    socket.emit("chat_message", { id: messageId, user: username, text: message });
+    document.getElementById("messageInput").value = "";
+  }
+}
+
+socket.on("chat_update", (data) => {
+  const messEl = document.getElementById(data.id);
+  messEl.remove();
+});
+
+socket.on("chat_up", (data) => {
+  const messEl = document.getElementById(data.id);
+  messEl.textContent = data.content;
+});
+
+function displayMessage(id, message) {
   const messageList = document.getElementById("messages");
   const newMessage = document.createElement("li");
+
   let isServer = message === "Server: Welcome to the chat!";
   if (!isServer) newMessage.id = id;
-  let toDel = false;
-
+  
   const messageText = document.createElement("span");
   messageText.textContent = message;
 
-  // Create a container for buttons to ensure consistent positioning
   const actionsContainer = document.createElement("div");
   actionsContainer.classList.add("message-actions");
 
@@ -81,7 +105,6 @@ show_reading_time: false
   deleteButton.classList.add("delete-btn");
   deleteButton.onclick = () => {
     socket.emit("chat_delete", { id });
-    toDel = true;
     document.getElementById(id).remove();
   };
 
@@ -89,11 +112,43 @@ show_reading_time: false
   updateButton.textContent = "Edit";
   updateButton.classList.add("update-btn");
   updateButton.onclick = () => {
-    let __msg = prompt("New Message:");
-    if (!__msg) return;
+    const currentMessage = messageText.textContent;
 
-    socket.emit("chat_update", { id, content: __msg });
-    messageText.textContent = `${message.split(": ")[0]}: ${__msg}`;
+    // Extract the message content (skip the username part)
+    const messageContent = currentMessage.split(": ", 2)[1]; // Grab the message part after "username:"
+
+    // Set the message input box with the current message content (no username)
+    document.getElementById("usernameInput").value = "*";  // Just set it to "*" for editing
+    document.getElementById("messageInput").value = messageContent;  // Set the message content for editing
+
+    // Disable the username input field so the user cannot change it
+    document.getElementById("usernameInput").disabled = true;
+
+    // Change the "Send" button to "Save"
+    const sendButton = document.querySelector("button[onclick='sendMessage()']");
+    sendButton.textContent = "Save";
+    sendButton.onclick = () => {
+      const updatedMessage = document.getElementById("messageInput").value.trim();
+
+      if (updatedMessage && updatedMessage.trim() !== "") {
+        // Emit the updated message to the server with the new content
+        socket.emit("chat_update", { id, content: "* " + updatedMessage });
+
+        // Update the displayed message immediately
+        messageText.textContent = "* " + updatedMessage;
+
+        // Change the "Save" button back to "Send" after saving
+        sendButton.textContent = "Send";
+        sendButton.onclick = sendMessage;
+
+        // Re-enable the username input field
+        document.getElementById("usernameInput").disabled = false;
+        location.reload();
+      } else {
+        alert("Message cannot be empty!");
+        return;
+      }
+    };
   };
 
   actionsContainer.appendChild(deleteButton);
@@ -101,11 +156,11 @@ show_reading_time: false
 
   newMessage.appendChild(messageText);
   if (!isServer) newMessage.appendChild(actionsContainer);
-  if (!toDel) messageList.appendChild(newMessage);
+  messageList.appendChild(newMessage);
 
-  // Scroll to the bottom after appending the new message
   messageList.scrollTop = messageList.scrollHeight;
 }
+
 
 </script>
 
