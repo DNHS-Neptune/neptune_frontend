@@ -270,17 +270,19 @@ show_reading_time: false
     async function updateUserTheme(themeName) {
         try {
             const response = await fetch(`${pythonURI}/api/theme`, {
+                ...fetchOptions,
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ theme: themeName })
+                body: JSON.stringify({
+                    theme: themeName
+                })
             });
 
-            if (!response.ok) throw new Error(`Failed to assign theme: ${response.status}`);
-            console.log(`User's theme updated to "${themeName}".`);
-        } catch (error) {
-            console.error("Error updating user's theme:", error);
-        }
-    }
+            if (!response.ok) {
+                throw new Error(`Failed to update theme: ${response.status}`);
+            }
+
+
+    
     document.addEventListener("DOMContentLoaded", () => {
     const colorPicker = document.getElementById("themeColor");
     if (colorPicker) {
