@@ -140,8 +140,9 @@ show_reading_time: false
     import { pythonURI, fetchOptions } from '{{site.baseurl}}/assets/js/api/config.js';
     // Import functions from config.js
     import { putUpdate, postUpdate, deleteData, logoutUser } from "{{site.baseurl}}/assets/js/api/profile.js";
-    
-    document.addEventListener("DOMContentLoaded", async () => {
+
+
+document.addEventListener("DOMContentLoaded", async () => {
     const colorPicker = document.getElementById("themeColor");
 
     if (colorPicker) {
@@ -151,194 +152,198 @@ show_reading_time: false
     }
 
     await initializeUserTheme();
+});
 
-    // Initialize user theme
-    async function initializeUserTheme() {
-        try {
-            let userTheme = await fetchUserTheme();
-            if (!userTheme) {
-                console.log("User has no theme, creating a default one...");
-                userTheme = await createDefaultTheme("#3498db"); // Default blue
-            }
-
-            const userCSS = await fetchUserCSS(userTheme);
-            if (userCSS) applyRawCSS(userCSS);
-        } catch (error) {
-            console.error("Initialization error:", error);
-        }
-    }
-
-    // Fetch user's current theme
-    async function fetchUserTheme() {
-        try {
-            const response = await fetch(`${pythonURI}/api/user`, fetchOptions);
-            if (!response.ok) throw new Error(`Failed to fetch theme: ${response.status}`);
-
-            const data = await response.json();
-            return data.theme_mode || null;
-        } catch (error) {
-            console.error("Error fetching theme:", error);
-            return null;
-        }
-    }
-
-    // Update the theme color when user selects a new color
-    async function updateUserThemeColor() {
-        console.log("Color picker changed!");  
-
-        if (!colorPicker) {
-            console.error("Color picker element not found!");
-            return;
-        }
-
-        const primaryColor = colorPicker.value;
-        console.log(`Selected Color: ${primaryColor}`);
-
+// 🟢 Initialize User Theme
+async function initializeUserTheme() {
+    try {
         let userTheme = await fetchUserTheme();
-        if (!userTheme) {
-            console.warn("No user theme found, creating one...");
-            userTheme = await createDefaultTheme(primaryColor);
+        if (!userTheme || typeof userTheme !== "string") {
+            console.log("User has no theme, creating a default one...");
+            userTheme = await createDefaultTheme("#3498db"); // Default blue
         }
 
-        console.log(`Updating theme: ${userTheme} with color ${primaryColor}`);
-
-        const css = generateCSS(primaryColor);
-
-        try {
-            const response = await fetch(`${pythonURI}/api/css/crud`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ theme: userTheme, css })
-            });
-
-            if (response.status === 404) {
-                console.warn("Theme not found on update, creating a new theme...");
-                userTheme = await createDefaultTheme(primaryColor);
-            } else if (!response.ok) {
-                throw new Error(`Failed to update theme: ${response.status}`);
-            }
-
-            console.log("Theme color updated successfully.");
-            applyRawCSS(css);
-        } catch (error) {
-            console.error("Error updating theme color:", error);
-        }
+        const userCSS = await fetchUserCSS(userTheme);
+        if (userCSS) applyRawCSS(userCSS);
+    } catch (error) {
+        console.error("Initialization error:", error);
     }
+}
 
-    // Apply CSS dynamically to the page
-    function applyRawCSS(cssContent) {
-        if (!cssContent || cssContent === "No CSS found") {
-            console.warn("No CSS content provided.");
-            return;
-        }
+// 🟢 Fetch User's Theme
+async function fetchUserTheme() {
+    try {
+        const response = await fetch(`${pythonURI}/api/user`, fetchOptions);
+        if (!response.ok) throw new Error(`Failed to fetch theme: ${response.status}`);
 
-        let existingStyle = document.getElementById("themeStylesheet");
-        if (existingStyle) existingStyle.remove();
-
-        let style = document.createElement("style");
-        style.id = "themeStylesheet";
-        style.textContent = cssContent;
-        document.head.appendChild(style);
-
-        console.log("Applied new theme CSS.");
+        const data = await response.json();
+        return data.theme_mode || null;
+    } catch (error) {
+        console.error("Error fetching theme:", error);
+        return null;
     }
+}
 
-    // Create a default theme if the user has none
-    async function createDefaultTheme(primaryColor) {
-        const userTheme = `user-theme-${Date.now()}`;
-        const css = generateCSS(primaryColor);
+// 🟢 Update User Theme Color
+async function updateUserThemeColor() {
+    console.log("Color picker changed!");
 
-        try {
-            const response = await fetch(`${pythonURI}/api/css/crud`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ theme: userTheme, css })
-            });
-
-            if (!response.ok) throw new Error(`Failed to create default theme: ${response.status}`);
-
-            console.log(`Default theme "${userTheme}" created successfully.`);
-            await updateUserTheme(userTheme);
-            return userTheme;
-        } catch (error) {
-            console.error("Error creating default theme:", error);
-            return null;
-        }
-    }
-
-    // Update the user’s theme name in the database
-    async function updateUserTheme(themeName) {
-        try {
-            const response = await fetch(`${pythonURI}/api/theme`, {
-                ...fetchOptions,
-                method: "POST",
-                body: JSON.stringify({
-                    theme: themeName
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to update theme: ${response.status}`);
-            }
-
-
-    
-    document.addEventListener("DOMContentLoaded", () => {
     const colorPicker = document.getElementById("themeColor");
-    if (colorPicker) {
-        colorPicker.addEventListener("input", updateUserThemeColor);
-    } else {
+    if (!colorPicker) {
         console.error("Color picker element not found!");
+        return;
     }
-});
 
-    // Fetch user's CSS from the database
-    async function fetchUserCSS(theme) {
-        try {
-            const response = await fetch(`${pythonURI}/api/css/read`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id: theme })
-            });
+    const primaryColor = colorPicker.value;
+    console.log(`Selected Color: ${primaryColor}`);
 
-            if (!response.ok) throw new Error(`Failed to read theme: ${response.status}`);
+    let userTheme = await fetchUserTheme();
+    if (!userTheme || typeof userTheme !== "string") {
+        console.warn("No user theme found, creating one...");
+        userTheme = await createDefaultTheme(primaryColor);
+    }
 
-            const data = await response.json();
-            return data.css || null;
-        } catch (error) {
-            console.error("Error fetching theme CSS:", error);
+    console.log(`Updating theme: ${userTheme} with color ${primaryColor}`);
+
+    const css = generateCSS(primaryColor);
+
+    try {
+        const response = await fetch(`${pythonURI}/api/css/crud`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ theme: userTheme, css })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to update theme: ${response.status}`);
         }
+
+        console.log("Theme color updated successfully.");
+
+        // 🔹 Ensure the updated CSS is fetched and applied
+        const updatedCSS = await fetchUserCSS(userTheme);
+        if (updatedCSS) applyRawCSS(updatedCSS);
+    } catch (error) {
+        console.error("Error updating theme color:", error);
+    }
+}
+
+// 🟢 Apply Theme CSS Dynamically
+function applyRawCSS(cssContent) {
+    if (!cssContent || cssContent === "No CSS found") {
+        console.warn("No CSS content provided.");
+        return;
     }
 
-    // Generate CSS dynamically based on primary color
-    function generateCSS(primaryColor) {
-        return `
-            .profile-container { background-color: ${primaryColor}; }
-            #profileImageBox { border: 4px solid ${primaryColor}; }
-            .file-icon, label, input { color: ${primaryColor}; border-color: ${primaryColor}; }
-            #applytheme, .side-btn { background-color: ${primaryColor}; }
-            #applytheme:hover, .side-btn:hover { background-color: ${adjustColor(primaryColor, -10)}; }
-        `;
+    let existingStyle = document.getElementById("themeStylesheet");
+    if (existingStyle) existingStyle.remove();
+
+    let style = document.createElement("style");
+    style.id = "themeStylesheet";
+    style.textContent = cssContent;
+    document.head.appendChild(style);
+
+    console.log("Applied new theme CSS.");
+}
+
+// 🟢 Create Default Theme (Only If Necessary)
+async function createDefaultTheme(primaryColor) {
+    let userTheme = await fetchUserTheme();
+    
+    if (userTheme) {
+        console.log(`User already has a theme: ${userTheme}, updating instead.`);
+        return userTheme;
     }
 
-    // Helper function to adjust color brightness
-    function adjustColor(color, percent) {
-        let num = parseInt(color.slice(1), 16),
-            amt = Math.round(2.55 * percent),
-            r = (num >> 16) + amt,
-            g = ((num >> 8) & 0x00ff) + amt,
-            b = (num & 0x0000ff) + amt;
+    userTheme = `user-theme-${Date.now()}`;
+    const css = generateCSS(primaryColor);
 
-        return `#${(
-            0x1000000 +
-            (r < 255 ? (r < 1 ? 0 : r) : 255) * 0x10000 +
-            (g < 255 ? (g < 1 ? 0 : g) : 255) * 0x100 +
-            (b < 255 ? (b < 1 ? 0 : b) : 255)
-        )
-            .toString(16)
-            .slice(1)}`;
+    try {
+        const response = await fetch(`${pythonURI}/api/css/crud`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ theme: userTheme, css })
+        });
+
+        if (!response.ok) throw new Error(`Failed to create default theme: ${response.status}`);
+
+        console.log(`Default theme "${userTheme}" created successfully.`);
+        await updateUserTheme(userTheme);
+        return userTheme;
+    } catch (error) {
+        console.error("Error creating default theme:", error);
+        return null;
     }
-});
+}
+
+// 🟢 Update User's Theme Name in Database
+async function updateUserTheme(themeName) {
+    try {
+        const response = await fetch(`${pythonURI}/api/theme`, {
+            ...fetchOptions,
+            method: "POST",
+            body: JSON.stringify({ theme: themeName })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to update theme: ${response.status}`);
+        }
+
+        console.log("User's theme updated in the database.");
+    } catch (error) {
+        console.error("Error updating user's theme:", error);
+    }
+}
+
+// 🟢 Fetch User's CSS
+async function fetchUserCSS(theme) {
+    try {
+        const response = await fetch(`${pythonURI}/api/css/read`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ theme_name: theme })
+        });
+
+        if (!response.ok) throw new Error(`Failed to read theme: ${response.status}`);
+
+        const data = await response.json();
+        console.log("Fetched CSS data:", data); // ✅ Debugging
+        return data.css || null;
+    } catch (error) {
+        console.error("Error fetching theme CSS:", error);
+        return null;
+    }
+}
+
+// 🟢 Generate CSS Dynamically Based on Primary Color
+function generateCSS(primaryColor) {
+    return `
+        .profile-container { background-color: ${primaryColor}; }
+        #profileImageBox { border: 4px solid ${primaryColor}; }
+        .file-icon, label, input { color: ${primaryColor}; border-color: ${primaryColor}; }
+        #applytheme, .side-btn { background-color: ${primaryColor}; }
+        #applytheme:hover, .side-btn:hover { background-color: ${adjustColor(primaryColor, -10)}; }
+    `;
+}
+
+// 🟢 Adjust Color Brightness
+function adjustColor(color, percent) {
+    let num = parseInt(color.slice(1), 16),
+        amt = Math.round(2.55 * percent),
+        r = (num >> 16) + amt,
+        g = ((num >> 8) & 0x00ff) + amt,
+        b = (num & 0x0000ff) + amt;
+
+    return `#${(
+        0x1000000 +
+        (r < 255 ? (r < 1 ? 0 : r) : 255) * 0x10000 +
+        (g < 255 ? (g < 1 ? 0 : g) : 255) * 0x100 +
+        (b < 255 ? (b < 1 ? 0 : b) : 255)
+    )
+        .toString(16)
+        .slice(1)}`;
+}
+
 
 
     // Function to update table with fetched data
