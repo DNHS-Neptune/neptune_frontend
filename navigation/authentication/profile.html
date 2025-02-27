@@ -114,7 +114,8 @@ show_reading_time: false
 
         <div>
             <label for="themeColor">Choose a Different Theme:</label>
-            <input type="color" id="themeColor" style="width: 40px; height: 30px; padding: 2px;" onchange="updateUserThemeColor()">
+            <input type="color" id="themeColor" style="width: 40px; height: 30px; padding: 2px;">
+
         </div>
         
         
@@ -280,6 +281,14 @@ show_reading_time: false
             console.error("Error updating user's theme:", error);
         }
     }
+    document.addEventListener("DOMContentLoaded", () => {
+    const colorPicker = document.getElementById("themeColor");
+    if (colorPicker) {
+        colorPicker.addEventListener("input", updateUserThemeColor);
+    } else {
+        console.error("Color picker element not found!");
+    }
+});
 
     // Fetch user's CSS from the database
     async function fetchUserCSS(theme) {
