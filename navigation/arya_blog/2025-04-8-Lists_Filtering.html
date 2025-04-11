@@ -1,10 +1,10 @@
 ---
 layout: post
-title: Binary Search Homework
-description: Homework 
+title: Lists and Filtering
+description:  Reflection
 type: issues 
 comments: true
-permalink: /binary
+permalink: /listfiltering
 ---
 
 
@@ -13,7 +13,7 @@ permalink: /binary
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>2025-4-10-binarysearch</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>2025-04-8-Lists_Filtering</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7520,25 +7520,20 @@ a.anchor-link {
 </style>
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-<main>
+<main>---
+layout: post
+title: Lists and Filtering
+description:  Reflection
+type: issues 
+comments: true
+---
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<hr/>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Binary-Search-on-a-Rotated-Array">Binary Search on a Rotated Array<a class="anchor-link" href="#Binary-Search-on-a-Rotated-Array">¶</a></h1>
+<h2 id="Popcorn-Hack-%231">Popcorn Hack #1<a class="anchor-link" href="#Popcorn-Hack-%231">¶</a></h2>
 </div>
 </div>
 </div>
@@ -7547,36 +7542,87 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">search_rotated_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-    <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-    <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;=</span> <span class="n">right</span><span class="p">:</span>
-        <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
-        
-        <span class="c1"># Check if the target is found</span>
-        <span class="k">if</span> <span class="n">arr</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">mid</span>
+<span class="c1"># Sample student_data for testing</span>
+<span class="n">student_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">'Name'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'Alice'</span><span class="p">,</span> <span class="s1">'Bob'</span><span class="p">,</span> <span class="s1">'Charlie'</span><span class="p">,</span> <span class="s1">'David'</span><span class="p">],</span>
+    <span class="s1">'Score'</span><span class="p">:</span> <span class="p">[</span><span class="mi">85</span><span class="p">,</span> <span class="mi">92</span><span class="p">,</span> <span class="mi">78</span><span class="p">,</span> <span class="mi">88</span><span class="p">]</span>
+<span class="p">})</span>
 
-        <span class="c1"># Left half is sorted</span>
-        <span class="k">if</span> <span class="n">arr</span><span class="p">[</span><span class="n">left</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">arr</span><span class="p">[</span><span class="n">mid</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="n">arr</span><span class="p">[</span><span class="n">left</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">target</span> <span class="o">&lt;</span> <span class="n">arr</span><span class="p">[</span><span class="n">mid</span><span class="p">]:</span>  <span class="c1"># Target is in the left half</span>
-                <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
-            <span class="k">else</span><span class="p">:</span>  <span class="c1"># Target is in the right half</span>
-                <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="c1"># Right half is sorted</span>
+<span class="c1"># Function to find students with scores in a specific range</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_students_in_range</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">min_score</span><span class="p">,</span> <span class="n">max_score</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">'Score'</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">min_score</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'Score'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">max_score</span><span class="p">)]</span>
+
+<span class="c1"># Test the function</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">find_students_in_range</span><span class="p">(</span><span class="n">student_data</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">90</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>    Name  Score
+0  Alice     85
+3  David     88
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Popcorn-Hack-%232">Popcorn Hack #2<a class="anchor-link" href="#Popcorn-Hack-%232">¶</a></h2>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">student_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">'Name'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'Alice'</span><span class="p">,</span> <span class="s1">'Bob'</span><span class="p">,</span> <span class="s1">'Charlie'</span><span class="p">,</span> <span class="s1">'David'</span><span class="p">,</span> <span class="s1">'Eve'</span><span class="p">],</span>
+    <span class="s1">'Score'</span><span class="p">:</span> <span class="p">[</span><span class="mi">85</span><span class="p">,</span> <span class="mi">92</span><span class="p">,</span> <span class="mi">78</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">55</span><span class="p">]</span>
+<span class="p">})</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">add_letter_grades</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_letter</span><span class="p">(</span><span class="n">score</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="mi">90</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">'A'</span>
+        <span class="k">elif</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="mi">80</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">'B'</span>
+        <span class="k">elif</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="mi">70</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">'C'</span>
+        <span class="k">elif</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="mi">60</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">'D'</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">arr</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">target</span> <span class="o">&lt;=</span> <span class="n">arr</span><span class="p">[</span><span class="n">right</span><span class="p">]:</span>  <span class="c1"># Target is in the right half</span>
-                <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="k">else</span><span class="p">:</span>  <span class="c1"># Target is in the left half</span>
-                <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="s1">'F'</span>
+    
+    <span class="n">df</span><span class="p">[</span><span class="s1">'Letter'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Score'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">get_letter</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span>
 
-    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-<span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-<span class="n">target</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">search_rotated_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">target</span><span class="p">))</span>  <span class="c1"># Output: 5</span>
+<span class="c1"># Test it</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">add_letter_grades</span><span class="p">(</span><span class="n">student_data</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -7589,7 +7635,12 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>5
+<pre>      Name  Score Letter
+0    Alice     85      B
+1      Bob     92      A
+2  Charlie     78      C
+3    David     64      D
+4      Eve     55      F
 </pre>
 </div>
 </div>
@@ -7602,7 +7653,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="First-and-Last-Occurance-of-an-Element">First and Last Occurance of an Element<a class="anchor-link" href="#First-and-Last-Occurance-of-an-Element">¶</a></h1>
+<h2 id="Pocorn-Hack-%233">Pocorn Hack #3<a class="anchor-link" href="#Pocorn-Hack-%233">¶</a></h2>
 </div>
 </div>
 </div>
@@ -7611,48 +7662,17 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">find_first_last</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-    <span class="c1"># Function to find the first occurrence</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">find_first</span><span class="p">():</span>
-        <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="n">first</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;=</span> <span class="n">right</span><span class="p">:</span>
-            <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
-            <span class="k">if</span> <span class="n">arr</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
-                <span class="n">first</span> <span class="o">=</span> <span class="n">mid</span>
-                <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
-            <span class="k">elif</span> <span class="n">arr</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">target</span><span class="p">:</span>
-                <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">first</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-    <span class="c1"># Function to find the last occurrence</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">find_last</span><span class="p">():</span>
-        <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="n">last</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;=</span> <span class="n">right</span><span class="p">:</span>
-            <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
-            <span class="k">if</span> <span class="n">arr</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
-                <span class="n">last</span> <span class="o">=</span> <span class="n">mid</span>
-                <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="k">elif</span> <span class="n">arr</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">target</span><span class="p">:</span>
-                <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">last</span>
+<span class="c1"># Function to find the mode (most common value) in a Series</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_mode</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">series</span><span class="o">.</span><span class="n">mode</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># returns the first mode if multiple exist</span>
 
-    <span class="n">first</span> <span class="o">=</span> <span class="n">find_first</span><span class="p">()</span>
-    <span class="n">last</span> <span class="o">=</span> <span class="n">find_last</span><span class="p">()</span>
-
-    <span class="k">return</span> <span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span> <span class="k">if</span> <span class="n">first</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
-
-<span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
-<span class="n">target</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">find_first_last</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">target</span><span class="p">))</span>  <span class="c1"># Output: (1, 3)</span>
+<span class="c1"># Test it</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">find_mode</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">])))</span>
 </pre></div>
 </div>
 </div>
@@ -7665,7 +7685,7 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>(1, 3)
+<pre>2
 </pre>
 </div>
 </div>
@@ -7678,7 +7698,34 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="Search-for-Smallest-Element">Search for Smallest Element<a class="anchor-link" href="#Search-for-Smallest-Element">¶</a></h1>
+<h1 id="Homework-Hack">Homework Hack<a class="anchor-link" href="#Homework-Hack">¶</a></h1>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<ol>
+<li><p>Load the Data Using Pandas:
+The dataset is created in the code itself using a dictionary, which is then converted into a Pandas DataFrame (df). We are currently running into issues with our datasets( talked to mort as well)</p>
+</li>
+<li><p>Implementing the Algorithms:
+Find fire incidents with the highest and lowest overall average temperature recorded: This task is adapted to find the post with the highest engagement (highest_engagement_post).</p>
+</li>
+</ol>
+<p>Calculate the difference between the maximum and minimum temperatures for each fire incident: The equivalent for this task would be calculating the total engagement for each post and using it for analysis.</p>
+<p>Identify all fire incidents where the temperature exceeded the average temperature across all incidents: The equivalent task here identifies posts with engagement scores higher than the average engagement score (above_average_posts).</p>
+<p>Group fire incidents by vegetation type and weather conditions, then calculate the average temperature and wind speed for each group: For this, I grouped posts based on their engagement level (Low, Medium, High) and calculated the average total engagement for each group (post_type_engagement).</p>
+<ol start="3">
+<li>Analytical Questions:
+Is there a correlation between vegetation type and fire intensity?: This is adapted to find the correlation between likes, shares, and comments in the posts (engagement_correlation).</li>
+</ol>
+<p>Which weather condition is associated with the highest average fire intensity?: This is adapted to identify which engagement level has the highest average total engagement (post_type_engagement).</p>
+<p>What percentage of fire incidents recorded temperatures above 100°F?: This is adapted to find the percentage of posts with more than 200 likes (percentage_above_200_likes).</p>
 </div>
 </div>
 </div>
@@ -7687,25 +7734,66 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">smallest_ge</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-    <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Importing necessary libraries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-    <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;=</span> <span class="n">right</span><span class="p">:</span>
-        <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">right</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
-        <span class="k">if</span> <span class="n">arr</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">target</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span>
-            <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="c1"># Create a sample dataset related to Palomar Health posts</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'Post_ID'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+    <span class="s1">'Post_Title'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'Health Tip #1'</span><span class="p">,</span> <span class="s1">'Health Tip #2'</span><span class="p">,</span> <span class="s1">'Health Tip #3'</span><span class="p">,</span> <span class="s1">'Health Tip #4'</span><span class="p">,</span> <span class="s1">'Health Tip #5'</span><span class="p">],</span>
+    <span class="s1">'Post_Content'</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s1">'Stay hydrated with water and electrolyte drinks.'</span><span class="p">,</span>
+        <span class="s1">'Exercise regularly to maintain heart health.'</span><span class="p">,</span>
+        <span class="s1">'Eat a balanced diet rich in fruits and vegetables.'</span><span class="p">,</span>
+        <span class="s1">'Get enough sleep to improve mental health.'</span><span class="p">,</span>
+        <span class="s1">'Practice mindfulness to reduce stress levels.'</span>
+    <span class="p">],</span>
+    <span class="s1">'Likes'</span><span class="p">:</span> <span class="p">[</span><span class="mi">120</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">200</span><span class="p">],</span>
+    <span class="s1">'Comments'</span><span class="p">:</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">45</span><span class="p">],</span>
+    <span class="s1">'Shares'</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span>
+    <span class="s1">'Engagement_Score'</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>
+<span class="p">}</span>
 
-    <span class="k">return</span> <span class="n">result</span>
-<span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">]</span>
-<span class="n">target</span> <span class="o">=</span> <span class="mi">8</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">smallest_ge</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">target</span><span class="p">))</span> 
+<span class="c1"># Convert data into a DataFrame</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="c1"># Task 1: Calculate the engagement score for each post (Likes + Comments + Shares)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'Total_Engagement'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Likes'</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Comments'</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Shares'</span><span class="p">]</span>
+
+<span class="c1"># Task 2: Find the post with the highest engagement</span>
+<span class="n">highest_engagement_post</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">'Total_Engagement'</span><span class="p">]</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Total_Engagement'</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()]</span>
+
+<span class="c1"># Task 3: Calculate the average engagement score for all posts</span>
+<span class="n">average_engagement_score</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Engagement_Score'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="c1"># Task 4: Identify all posts with engagement scores above the average</span>
+<span class="n">above_average_posts</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">'Engagement_Score'</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">average_engagement_score</span><span class="p">]</span>
+
+<span class="c1"># Task 5: Group posts by their engagement level (High, Medium, Low)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'Engagement_Level'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'Engagement_Score'</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">'Low'</span><span class="p">,</span> <span class="s1">'Medium'</span><span class="p">,</span> <span class="s1">'High'</span><span class="p">])</span>
+
+<span class="c1"># Task 6: Answer analytical questions</span>
+
+<span class="c1"># Question 1: What is the correlation between likes, shares, and comments?</span>
+<span class="n">engagement_correlation</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">'Likes'</span><span class="p">,</span> <span class="s1">'Comments'</span><span class="p">,</span> <span class="s1">'Shares'</span><span class="p">]]</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+
+<span class="c1"># Question 2: Which type of post has the highest total engagement?</span>
+<span class="n">post_type_engagement</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'Engagement_Level'</span><span class="p">)[</span><span class="s1">'Total_Engagement'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="c1"># Question 3: What percentage of posts have more than 200 likes?</span>
+<span class="n">posts_above_200_likes</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">'Likes'</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">200</span><span class="p">]</span>
+<span class="n">percentage_above_200_likes</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">posts_above_200_likes</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span>
+
+<span class="c1"># Print results</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Highest Engagement Post:</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">highest_engagement_post</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Average Engagement Score:"</span><span class="p">,</span> <span class="n">average_engagement_score</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Posts with Above Average Engagement Score:</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">above_average_posts</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Engagement Correlation:</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">engagement_correlation</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Average Total Engagement by Post Type:</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">post_type_engagement</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Percentage of Posts with More Than 200 Likes:"</span><span class="p">,</span> <span class="n">percentage_above_200_likes</span><span class="p">,</span> <span class="s2">"%"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7718,9 +7806,104 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>9
+<pre>Highest Engagement Post:
+    Post_ID     Post_Title                                Post_Content  Likes  \
+3        4  Health Tip #4  Get enough sleep to improve mental health.    500   
+
+   Comments  Shares  Engagement_Score  Total_Engagement  
+3        80      40               5.0               620  
+
+Average Engagement Score: 2.54
+
+Posts with Above Average Engagement Score:
+    Post_ID     Post_Title                                  Post_Content  \
+1        2  Health Tip #2  Exercise regularly to maintain heart health.   
+3        4  Health Tip #4    Get enough sleep to improve mental health.   
+
+   Likes  Comments  Shares  Engagement_Score  Total_Engagement  
+1    300        50      25               3.0               375  
+3    500        80      40               5.0               620  
+
+Engagement Correlation:
+              Likes  Comments    Shares
+Likes     1.000000  0.967138  0.882399
+Comments  0.967138  1.000000  0.970126
+Shares    0.882399  0.970126  1.000000
+
+Average Total Engagement by Post Type:
+ Engagement_Level
+Low       203.333333
+Medium    375.000000
+High      620.000000
+Name: Total_Engagement, dtype: float64
+
+Percentage of Posts with More Than 200 Likes: 40.0 %
 </pre>
 </div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>/tmp/ipykernel_305187/597709803.py:45: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
+  post_type_engagement = df.groupby('Engagement_Level')['Total_Engagement'].mean()
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Pandas</th>
+<th>SQL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ease of Use</strong></td>
+<td>Very flexible with Pythonic syntax</td>
+<td>Standardized, declarative queries</td>
+</tr>
+<tr>
+<td><strong>Performance</strong></td>
+<td>Good for small-to-medium datasets</td>
+<td>Excellent for large datasets</td>
+</tr>
+<tr>
+<td><strong>Flexibility</strong></td>
+<td>Advanced data manipulation (reshaping, pivoting)</td>
+<td>Efficient queries, but limited transformations</td>
+</tr>
+<tr>
+<td><strong>Data Storage</strong></td>
+<td>In-memory data storage</td>
+<td>Persistent, disk-based storage</td>
+</tr>
+<tr>
+<td><strong>Scalability</strong></td>
+<td>Limited (depends on memory)</td>
+<td>Highly scalable (ideal for large datasets)</td>
+</tr>
+<tr>
+<td><strong>Aggregation/Querying</strong></td>
+<td>Simple groupby, apply functions</td>
+<td>Efficient aggregation and querying</td>
+</tr>
+<tr>
+<td><strong>Integration</strong></td>
+<td>Excellent with Python ecosystem</td>
+<td>Works with databases and BI tools</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
